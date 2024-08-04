@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Игорь",
+        "surname": "Шацкий",
+        "position": "Главный тренер",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/Y0YzfVPm/sportsman-profile.png",
+        "discipline": "kickboxing",
+        "rating": 4
+    },
+    {
+        "name": "Нұралы",
+        "surname": "Әліп",
+        "position": "Главный тренер",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/Sxqff1K6/sportsman-profile-2.png",
+        "discipline": "box",
+        "rating": 3
+    },
+    {
+        "name": "Рамазан",
+        "surname": "Оразов",
+        "position": "Помощник тренера",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/KcC2jBYS/sportsman-profile-3.png",
+        "discipline": "борьба",
+        "rating": 5
+    },
+    {
+        "name": "Абат",
+        "surname": "Айымбетов",
+        "position": "Главный тренер",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/x1zqq9Qg/sportsman-profile-4.png",
+        "discipline": "kickboxing",
+        "rating": 5
+    },
+    {
+        "name": "Игорь",
+        "surname": "Шацкий",
+        "position": "Главный тренер",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/Y0YzfVPm/sportsman-profile.png",
+        "discipline": "kickboxing",
+        "rating": 4
+    },
+    {
+        "name": "Нұралы",
+        "surname": "Әліп",
+        "position": "Главный тренер",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/Sxqff1K6/sportsman-profile-2.png",
+        "discipline": "box",
+        "rating": 3
+    },
+    {
+        "name": "Рамазан",
+        "surname": "Оразов",
+        "position": "Помощник тренера",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/KcC2jBYS/sportsman-profile-3.png",
+        "discipline": "борьба",
+        "rating": 5
+    },
+    {
+        "name": "Абат",
+        "surname": "Айымбетов",
+        "position": "Главный тренер",
+        "status": "coach",
+        "photo": "https://i.postimg.cc/x1zqq9Qg/sportsman-profile-4.png",
+        "discipline": "kickboxing",
+        "rating": 5
+    }
+]
