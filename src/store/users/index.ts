@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import type {Coach} from "@/utils/models";
-import { useApi } from "@/composable/useApi";
+import {useApi} from "@/composable/useApi";
 
 interface User {
     id: string;
@@ -24,12 +24,14 @@ export const useUserStore = defineStore('users', {
     state: () => ({
         coaches: [] as Coach[],
         currentSchoolCoaches: [] as Coach[],
-        users: [] as User[]
+        users: [] as User[],
+        sportsmens: [] as Coach[]
     }),
 
     getters: {
         getCoaches: (state) => state.coaches,
-        getCurrentSchoolCoaches: (state) => state.currentSchoolCoaches
+        getCurrentSchoolCoaches: (state) => state.currentSchoolCoaches,
+        getCurrentSchoolSportsmens: (state) => state.sportsmens
     },
 
     actions: {
@@ -70,6 +72,15 @@ export const useUserStore = defineStore('users', {
                     method: 'GET'
                 })
                 console.log(response);
+            } catch (e) {
+                console.error(e)
+            }
+        },
+        async loadSportsmensBySchool(schoolId: string){
+            try {
+                this.sportsmens = await useApi(`/v1/schools/${schoolId}/sportsmen`, {
+                    method: 'GET'
+                });
             } catch (e) {
                 console.error(e)
             }

@@ -244,7 +244,7 @@ onMounted(async () => {
                     <option value="3">
                       Тренер
                     </option>
-                    <option value="3">
+                    <option value="2">
                       Спортсмен(ка)
                     </option>
                     <option value="4" selected>

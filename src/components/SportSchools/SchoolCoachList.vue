@@ -11,14 +11,6 @@ const coaches = computed(() => {
 const disciplines = computed(() => {
   return disciplineStore.getAllDisciplines
 })
-const getDisciplineColor = (discipline) => {
-  const colors = {
-    'kickboxing': '#29FF72',
-    'box': '#E1253C',
-    'борьба': '#FFB629'
-  };
-  return colors[discipline] || '#ffffff';
-};
 </script>
 <template>
     <div class="listSportsMen">

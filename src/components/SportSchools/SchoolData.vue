@@ -67,6 +67,7 @@ onMounted(async () => {
     scheduleStore.getSchedulesBySchoolId(<string>route?.params?.id),
     citiesStore.fetchCities(),
     userStore.loadCoachesBySchool(<string>route?.params?.id),
+    userStore.loadSportsmensBySchool(<string>route?.params?.id),
     disciplineStore.loadAllDisciplines(),
     groupStore.loadDisciplines(),
     groupStore.loadGroupsBySchool(<string>route?.params?.id)
