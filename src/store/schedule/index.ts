@@ -16,7 +16,6 @@ export const useScheduleStore = defineStore('schedule', {
         async getSchedulesBySchoolId(id: string){
             try {
                 const response = await useApi(`/v1/schedules/school/${id}`);
-                console.log(response);
                 this.schedules = [];
                 if (response.appointments && response.appointments.length > 0) {
                     response.appointments.forEach((appointment: Schedule) => {
@@ -27,6 +26,11 @@ export const useScheduleStore = defineStore('schedule', {
                             color: appointment?.group?.color,
                             description: appointment.description,
                             isEditable: false,
+                            weekDay: appointment?.weekDay,
+                            coach: appointment.coach,
+                            discipline: appointment?.discipline,
+                            timeFrom: appointment?.timeFrom,
+                            timeTo: appointment?.timeTo,
                             time: {
                                 start: `${convertDateToYYYYMMDD(appointment.date)} ${convertTimeToHHMM(appointment?.timeFrom)}`,
                                 end: `${convertDateToYYYYMMDD(appointment.date)} ${convertTimeToHHMM(appointment?.timeTo)}`

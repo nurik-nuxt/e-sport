@@ -55,6 +55,9 @@ type Schedule = {
     timeFrom?: string;
     timeTo?: string;
     name?: string;
+    weekDay?: string;
+    coach?: string;
+    discipline?: string;
     group?: {
         color?: string;
         name?: string;

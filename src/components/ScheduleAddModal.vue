@@ -5,10 +5,12 @@ import{useGroupStore} from "@/store/groups/groupsStore";
 import {useApi} from "@/composable/useApi";
 import { useUserStore } from "@/store/users";
 import {useRoute} from "vue-router";
+import {useScheduleStore} from "@/store/schedule";
 
 const emit = defineEmits(['close']);
 const groupStore = useGroupStore();
 const userStore = useUserStore();
+const scheduleStore = useScheduleStore();
 const route = useRoute();
 
 const groupName = ref('');
@@ -30,15 +32,12 @@ const groups = computed(() => groupStore.getCurrentSchoolGroups)
 
 const handleSubmit = async (event: Event) => {
   event.preventDefault();
-  const groupPrice = isFree.value ? 0 : price.value;
 
   const groupData = {
-    // name: groupName.value,
     weekDay: weekDay.value,
     timeFrom: startTime.value,
     timeTo: endTime.value,
     groupId: groupName.value,
-    // scheduleId
   };
 
   try {
@@ -47,8 +46,9 @@ const handleSubmit = async (event: Event) => {
       method: 'POST',
       data: groupData
     });
-    if (response?.id) {
-      await groupStore.loadGroupsBySchool(<string>response?.school?.id)
+    if (response) {
+      await scheduleStore.getSchedulesBySchoolId(<string>route?.params?.id)
+      // await groupStore.loadGroupsBySchool(<string>response?.school?.id)
     }
     emit('close'); // Close the modal after successful creation
   } catch (error) {
@@ -168,7 +168,7 @@ const days = ref([
                 {{ day.title }}
               </option>
             </select>
-            <img src="/icons/arrowDown.png" class="icon-down" />
+            <img src="/icons/arrowDown.png" class="icon-down"  alt="alt"/>
           </div>
           <div class="reject-and-add-btns flex justify-between mt-5">
             <div class="reject-btn">

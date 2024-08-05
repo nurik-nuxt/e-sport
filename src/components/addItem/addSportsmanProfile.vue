@@ -22,7 +22,7 @@ const middleName = ref('')
 const iin = ref('');
 const biography = ref('');
 const birth_date = ref('');
-const phoneNumber = ref('+77777777777');
+const phoneNumber = ref('');
 const role = ref('');
 const disciplineId = ref('');
 const sport = ref('');
@@ -200,7 +200,6 @@ onMounted(async () => {
                       name="phone_number"
                       id="phone_number"
                       required
-                      value="+7"
                       :size="12"
                       :maxlength="12"
                       autocomplete="tel"
