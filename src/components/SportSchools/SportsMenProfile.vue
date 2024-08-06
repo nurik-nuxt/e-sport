@@ -28,7 +28,7 @@ const user = computed(() => {
 </script>
 <template>
     <div class="sports_men_profile">
-        <div class="profile_info flex gap-x-9 justify-center px-8">
+        <div class="profile_info flex gap-x-9 px-8">
             <div class="profile_img border-1 border-black border-solid">
                 <img :src="user?.profileImage" class="w-auto h-auto profile-image" alt="photo"/>
             </div>

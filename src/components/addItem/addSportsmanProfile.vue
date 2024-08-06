@@ -88,7 +88,7 @@ async function onSubmit() {
       lastName: lastName.value,
       phoneNumber: phoneNumber.value,
       schoolId: <string>route?.params?.id,
-      disciplineId: disciplineId.value,
+      disciplineId: sport.value,
       biography: biography.value,
       birth_date: birth_date.value,
       profileImage: profileImage.value,
