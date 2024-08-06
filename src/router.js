@@ -14,6 +14,7 @@ import EventItem from "./components/News-Events/EventItem.vue";
 import AddEvent from "./components/addItem/addEvent.vue";
 import CreateAboutEvent from "@/components/News-Events/CreateAboutEvent.vue";
 import CreateAboutParticipants from "@/components/News-Events/CreateAboutParticipants.vue";
+import CoachProfile from "@/components/SportSchools/CoachProfile.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -28,7 +29,8 @@ const router = createRouter({
             props: true 
         },
         { path: '/AddSchool', component: AddSchoolPage},
-        { path: '/SportsmenProfile', component: SportsMenProfile},
+        { path: '/sportsmen-profile/:id', component: SportsMenProfile},
+        { path:'/coach-profile/:id', component: CoachProfile},
         { path: '/schedules', component: Schedules },
         {
             path: '/news-events',

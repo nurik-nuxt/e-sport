@@ -44,9 +44,9 @@ const disciplines = computed(() => {
                         рейтинг
                     </div>
                     <div class="itemBtnMore">
-                        <div class="btnMore">
+                        <router-link :to="`/coach-profile/${sportsman.id}`" class="btnMore">
                             Подробнее
-                        </div>
+                        </router-link>
                     </div>
                 </div>
             </div>
