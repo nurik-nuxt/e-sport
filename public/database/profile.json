@@ -5,22 +5,81 @@
         "position": "Главный тренер",
         "biography": "И́горь Вале́рьевич Ша́цкий — казахстанский футболист, вратарь клуба «Актобе» и сборной Казахстана.",
         "status": "sportsman",
-        "photo": "https://i.postimg.cc/MTwqybrs/profile-num-2.png",
+        "photo": "https://i.postimg.cc/5ygTvdkW/orazov.png",
         "awards": [
             {
                 "id": 1,
                 "link": "https://www.youtube.com/",
-                "img": "https://i.postimg.cc/1z7YSDLW/award-cup.png",
-                "text": "Кубок Азии"
+                "img": "https://i.postimg.cc/VLpktfW9/first-place.png",
+                "text": "Кубок Азии",
+                "date_event": "2024-09-15",
+                "event_types": [
+                    {
+                        "id": "9fb881ab-d6e9-412e-889f-f1b19c28d1f0",
+                        "name": "Чемпионат Казахстана",
+                        "color": "red"
+                    }
+                ]
             },
             {
                 "id": 2,
                 "link": "https://www.youtube.com/",
-                "img": "https://i.postimg.cc/7ZxBTB4s/Trophy-Cup.png",
-                "text": "Лига Наций"
+                "img": "https://i.postimg.cc/1zcmbphM/second-place.png",
+                "text": "Лига Наций",
+                "date_event": "2024-09-15",
+                "event_types": [
+                    {
+                        "id": "e213539d-1019-421b-a20b-e9b1fad7e49d",
+                        "name": "Чемпионат Области",
+                        "color": "blue"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "link": "https://www.youtube.com/",
+                "img": "https://i.postimg.cc/1zcmbphM/second-place.png",
+                "text": "Лига Наций",
+                "date_event": "2024-09-15",
+                "event_types": [
+                    {
+                        "id": "e213539d-1019-421b-a20b-e9b1fad7e49d",
+                        "name": "Чемпионат Области",
+                        "color": "blue"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "link": "https://www.youtube.com/",
+                "img": "https://i.postimg.cc/1zcmbphM/second-place.png",
+                "text": "Лига Наций",
+                "date_event": "2024-09-15",
+                "event_types": [
+                    {
+                        "id": "e213539d-1019-421b-a20b-e9b1fad7e49d",
+                        "name": "Чемпионат Области",
+                        "color": "blue"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "link": "https://www.youtube.com/",
+                "img": "https://i.postimg.cc/1zcmbphM/second-place.png",
+                "text": "Лига Наций",
+                "date_event": "2024-09-15",
+                "event_types": [
+                    {
+                        "id": "e213539d-1019-421b-a20b-e9b1fad7e49d",
+                        "name": "Чемпионат Области",
+                        "color": "blue"
+                    }
+                ]
             }
         ],
-        "discipline": "борьба",
+        "discipline": "football",
+        "discipline_color": "yellow",
         "coach": "Станислав Черчесов",
         "rating": 4,
         "gallery": [

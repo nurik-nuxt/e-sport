@@ -53,12 +53,20 @@ const user = computed(() => {
                     <div class="award_title text-1xl font-bold">
                         Награды
                     </div>
-                    <div class="award_list flex mt-2">
+                    <div class="award_list flex flex-col mt-2 h-24 overflow-y-auto">
                         <div v-for="item in testUser.awards" :key="item.id" class="award_item">
-                            <a :href="item.link" class="flex" target="_blank"> 
-                                <img :src="item.img" :alt="`Photo of ${item.text}`" class="size-10">
-                                <p class="mt-2">{{ item.text }}</p>
-                            </a>
+                            <p class="flex" target="_blank">
+                                <img :src="item.img" :alt="`Photo of ${item.text}`" class="size-7">
+                                <span class="mt-1">{{ item.text }}</span>
+                                <span class="mt-1 px-4">-</span>
+                                <span class="mt-1">{{item.date_event}}</span>
+                                <span v-for="eventType in item.event_types"
+                                      :key="eventType.id"
+                                      class="ml-4 rounded event-type-class"
+                                      :style="{ backgroundColor: eventType.color }">
+                                  {{ eventType.name }}
+                                </span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -66,7 +74,9 @@ const user = computed(() => {
                     <div class="disciplines_title text-1xl font-bold">
                         Дисциплины
                     </div>
-                    {{  user?.discipline?.title }}
+                    <div class="discipline-block" :style="{ backgroundColor: user.discipline_color }">
+                      {{  user?.discipline?.title }}
+                    </div>
                 </div>
                 <div class="coach mt-2.5">
                     <div class="coach_title text-1xl font-bold">
@@ -95,12 +105,61 @@ const user = computed(() => {
                 </div>
             </div>
         </div>
+        <button class="edit-button">
+          Редактировать
+        </button>
     </div>
 </template>
 <style scoped>
     .sports_men_profile{
         margin-top: 5rem;
     }
+    .profile_img{
+      width: 411px;
+      max-width: 411px;
+      overflow: hidden; /* Скрыть части изображения, выходящие за пределы контейнера */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid black;
+    }
+    .profile_img_inner{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .discipline-block{
+      width: max-content;
+      border-radius: 3px;
+      padding: 8px 30px;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 20px;
+    }
+    .award_list::-webkit-scrollbar {
+      width: 2px;
+    }
+
+    .award_list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .award_list::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    .award_list::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* For Firefox */
+    .award_list {
+      scrollbar-width: thin;
+      scrollbar-color: #888 #f1f1f1;
+    }
+
     .galleryList {
         display: flex;
         flex-wrap: wrap;
@@ -125,5 +184,30 @@ const user = computed(() => {
       max-height: 350px;
       position: relative;
       max-width: 350px;
+    }
+    .award_item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.188rem;
+    }
+    .event-type-class{
+      padding: 5px 12px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .edit-button{
+      border: 1px solid #F50000;
+      color: #031954;
+      padding: 14px 20px;
+      border-radius: 15px;
+      position: absolute;
+      top: 30px;
+      right: 50px;
+      transition: all 200ms ease;
+    }
+    .edit-button:hover{
+      background-color: #B10000;
+      color: white;
     }
 </style>
