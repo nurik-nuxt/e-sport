@@ -37,16 +37,27 @@ const getAuthorName = (organizer: string) => {
   return organizer || 'Unknown Organizer';
 };
 
+// Function to sort winners by medal priority
+const sortWinners = (winners) => {
+  const medalPriority = { gold: 1, silver: 2, bronze: 3 };
+  return winners.sort((a, b) => medalPriority[a.medal] - medalPriority[b.medal]);
+};
+
+// Create a computed property for sorted winners
+const sortedWinners = computed(() => {
+  return selectedEvent.value && selectedEvent.value.winners ? sortWinners(selectedEvent.value.winners) : [];
+});
+
 const getMedalMessage = (medal: string) => {
   switch (medal) {
     case 'gold':
-      return 'Первое место';
+      return '1 - место';
     case 'silver':
-      return 'Второе место';
+      return '2 - место';
     case 'bronze':
-      return 'Well done on winning the bronze medal!';
+      return '3 - место';
     default:
-      return 'Congratulations!';
+      return 'Участник';
   }
 };
 const hasWinners = computed(() => {
@@ -106,18 +117,17 @@ const hasWinners = computed(() => {
               <line x1="0" y1="0" x2="100%" y2="0" style="stroke:rgb(0,0,0);stroke-width:2" />
             </svg>
             <div class="winners-block">
-              <div class="winner-title font-semibold mt-4 ml-2.5">
+              <div class="winner-title font-semibold mt-4 text-xl">
                 Победители:
               </div>
               <div v-if="hasWinners" class="winners-block-item">
-                <div class="winners-block-item flex gap-x-1" v-for="winner in selectedEvent.winners" :key="winner.id">
+                <div class="winners-block-item flex gap-x-1" v-for="winner in sortedWinners" :key="winner.id">
                   <div class="profile-image-winner w-12 h-12">
                     <img :src="winner.user.profileImage" class="w-12 h-12 border-4 rounded-full" />
                   </div>
-                  <div class="winner-fullname flex mt-3">
-                    {{ winner.user.firstName }} {{ winner.user.lastName }}
+                  <div class="winner-fullname flex mt-3 font-medium">
+                    {{ winner.user.firstName }} {{ winner.user.lastName }} - {{ getMedalMessage(winner.medal) }}
                   </div>
-<!--                  - {{ getMedalMessage(winner.medal) }}-->
                 </div>
               </div>
               <div v-else class="winners-block-item text-xl text-slate-500 px-2 py-24 font-bold italic" >
@@ -129,7 +139,7 @@ const hasWinners = computed(() => {
               <line x1="0" y1="0" x2="100%" y2="0" style="stroke:rgb(0,0,0);stroke-width:2" />
             </svg>
             <div class="list-participants-block flex flex-col mt-4">
-              <div class="participants-title font-semibold text-sm ml-2.5">
+              <div class="participants-title font-semibold text-xl">
                 Участники:
               </div>
               <div class="participant-item" v-for="participant in selectedEvent.participants" :key="participant.id">
