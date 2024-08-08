@@ -57,12 +57,12 @@ onMounted(fetchEvents);
 <template>
   <div class="events-block">
     <EventsBlockNav/>
-    <div class="event-list">
+    <div class="event-list pb-10">
       <div v-if="error">
         Error: {{ error }}
       </div>
-      <div v-else class="flex flex-wrap gap-5">
-        <div v-for="event in events" :key="event.id" class="event-item h-64 flex flex-col justify-between">
+      <div v-else class="flex flex-wrap gap-y-8 gap-x-4">
+        <div v-for="event in events" :key="event.id" class="event-item flex flex-col justify-between">
           <div class="event-param flex gap-x-1">
             <div class="event-type" :style="{ backgroundColor: event.discipline.color }">
               {{ event.discipline.title }}
@@ -76,10 +76,10 @@ onMounted(fetchEvents);
               {{ truncateText(event.title, 70) }}
             </div>
           </div>
-          <div class="event-description">
-            {{ truncateText(event.description, 70)}}
+          <div class="event-img h-64">
+            <img :src="event.thumbnail" class="event-thumbnail" alt="Нет фото" />
           </div>
-          <div class="event-org-details flex flex-row justify-between">
+          <div class="event-org-details flex flex-row justify-between mt-2.5">
             <div class="event-date-block">
               <div class="event-date-title">
                 Время проведения
@@ -97,7 +97,7 @@ onMounted(fetchEvents);
               </div>
             </div>
           </div>
-          <div class="event-details-btn bottom-0">
+          <div class="event-details-btn">
             <button @click="selectEvent(event)">
               Подробнее
             </button>
@@ -120,6 +120,13 @@ onMounted(fetchEvents);
   .event-item{
     width: 310px;
     border-radius: 5px;
+    box-shadow: 5px 5px 10px 0px rgba(150,150,150,0.73);
+    -webkit-box-shadow: 5px 5px 10px 0px rgba(150,150,150,0.73);
+    -moz-box-shadow: 5px 5px 10px 0px rgba(150,150,150,0.73);
+    padding: 10px;
+  }
+  .event-param{
+    height: 30px;
   }
   .event-type {
     padding: 5px;
@@ -128,21 +135,32 @@ onMounted(fetchEvents);
     border-radius: 3px;
     font-size: 10px;
     font-weight: 600;
+    height: max-content;
   }
   .event-name, .event-description, .event-dates, .event-deadline {
     margin: 5px 0;
   }
   .event-name-block{
     display: block;
+    height: 60px;
+    max-height: 60px;
   }
   .event-name{
     font-weight: 600;
     font-size: 1rem;
+    height: 60px;
   }
-  .event-description{
-    display: block;
-    font-size: 12px;
-    color: #606060;
+  .event-img{
+    height: 96px;
+    max-height: 96px;
+  }
+  .event-thumbnail{
+    height: 96px;
+    object-fit: cover;
+    width: 100%;
+  }
+  .event-org-details{
+    height: 30px;
   }
   .event-date-title{
     font-size: 10px;
@@ -151,16 +169,21 @@ onMounted(fetchEvents);
     font-size: 10px;
     color: #000000;
     font-weight: 500;
+    margin: 0;
   }
   .org-name{
     font-size: 10px;
     color: #000000;
     font-weight: 500;
+    margin: 0;
   }
   .event-organizer-title{
     color: #575757;
     font-weight: 500;
     font-size: 10px;
+  }
+  .event-details-btn{
+    height: 60px;
   }
   .event-details-btn button{
     font-size: 14px;
@@ -169,8 +192,9 @@ onMounted(fetchEvents);
     border: 1px solid #031954;
     border-radius: 5px;
     font-weight: 500;
-    margin-top: 2rem;
+    margin-top: 1rem;
     transition: all 200ms ease;
+
   }
   .event-details-btn button:hover{
     background-color: #031954;

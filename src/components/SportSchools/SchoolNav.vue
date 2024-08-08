@@ -15,6 +15,9 @@
     function goToGroups(){
       emit('switch', 'groups');
     }
+    function goToReviews(){
+      emit('switch', 'review');
+    }
 </script>
 <template>
     <div class="list_nav">
@@ -36,7 +39,7 @@
         <div class="nav_item" @click="goToGroups">
             Группы
         </div>
-        <div class="nav_item">
+        <div class="nav_item" @click="goToReviews">
             Отзывы
         </div>
         <div class="nav_item">

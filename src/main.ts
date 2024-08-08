@@ -3,6 +3,8 @@ import { createPinia } from 'pinia';
 import { useAuthStore } from '@/store/auth';
 import { createYmaps } from 'vue-yandex-maps';
 import './style.css';
+import 'vant/lib/index.css';
+
 
 import App from './App.vue';
 import router from './router';

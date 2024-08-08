@@ -1,15 +1,17 @@
-import { defineStore } from "pinia";
-import type { Schedule, TrainingMoment } from "@/utils/models";
-import { useApi } from "@/composable/useApi";
-import { convertDateToYYYYMMDD, convertTimeToHHMM } from "@/utils/helpers";
+import {defineStore} from "pinia";
+import type {Schedule} from "@/utils/models";
+import {useApi} from "@/composable/useApi";
+import {convertDateToYYYYMMDD, convertTimeToHHMM} from "@/utils/helpers";
 
 export const useScheduleStore = defineStore('schedule', {
     state: () => ({
-        schedules: [] as Schedule[]
+        schedules: [] as Schedule[],
+        reviews: [] as any
     }),
 
     getters: {
-        getCurrentSchoolSchedule: (state) => state.schedules
+        getCurrentSchoolSchedule: (state) => state.schedules,
+        getSchoolReviews: (state) => state.reviews
     },
 
     actions: {
@@ -19,7 +21,6 @@ export const useScheduleStore = defineStore('schedule', {
                 this.schedules = [];
                 if (response.appointments && response.appointments.length > 0) {
                     response.appointments.forEach((appointment: Schedule) => {
-                        console.log(appointment);
                         this.schedules.push({
                             id: appointment.id,
                             title: appointment?.group?.name,
@@ -59,6 +60,29 @@ export const useScheduleStore = defineStore('schedule', {
                 //         })
                 //     }
                 // })
+            } catch (e) {
+                console.error(e)
+            }
+        },
+
+        async fetchSchoolReviews(id: string) {
+            try {
+                const response = await useApi(`/v1/reviews/school/${id}`, {
+                    method: 'GET'
+                })
+                console.log(response);
+                this.reviews = response
+            } catch (e) {
+                console.error(e);
+            }
+        },
+
+        async createReview(reviewData: any) {
+            try {
+                return await useApi(`/v1/reviews/`, {
+                    method: 'POST',
+                    data: reviewData
+                })
             } catch (e) {
                 console.error(e)
             }

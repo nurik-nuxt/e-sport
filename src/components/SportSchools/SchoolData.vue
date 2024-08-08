@@ -11,6 +11,7 @@ import SchoolSportsMen from "./SchoolSportsMen.vue";
 import SportsMenProfile from "../SportSchools/SportsMenProfile.vue";
 import AddSportsmanProfile from '../addItem/addSportsmanProfile.vue';
 import SchoolSchedule from './SchoolSchedule.vue';
+import SchoolReview from "@/components/SportSchools/SchoolReview.vue";
 import SchoolGroups from "@/components/SportSchools/SchoolGroups/SchoolGroups.vue";
 import { useCitiesStore } from "@/store/cities";
 import { useUserStore } from "@/store/users";
@@ -65,6 +66,7 @@ onMounted(async () => {
   await Promise.all([
     schoolStore.fetchSchoolById(<string>route?.params?.id),
     scheduleStore.getSchedulesBySchoolId(<string>route?.params?.id),
+    scheduleStore.fetchSchoolReviews(<string>route?.params?.id),
     citiesStore.fetchCities(),
     userStore.loadCoachesBySchool(<string>route?.params?.id),
     userStore.loadSportsmensBySchool(<string>route?.params?.id),
@@ -103,6 +105,7 @@ const school = computed(() => {
         <sports-men-profile v-if="currentView === 'sportsmen-profile'"/>
         <school-schedule v-if="currentView === 'schedule'"/>
         <school-groups v-if="currentView === 'groups'" />
+        <school-review v-if="currentView === 'review'" />
     </div>
     <div v-else>
         Данные не найдены!

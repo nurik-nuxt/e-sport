@@ -13,6 +13,7 @@
     "axios": "^1.7.2",
     "pinia": "^2.1.7",
     "qalendar": "^3.8.1",
+    "vant": "^4.9.4",
     "vue": "^3.4.29",
     "vue-router": "^4.4.0",
     "vue-yandex-maps": "^2.1.4",
@@ -20,6 +21,7 @@
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
+    "@vant/auto-import-resolver": "^1.2.1",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/cli-plugin-typescript": "^5.0.8",
     "autoprefixer": "^10.4.19",
@@ -27,6 +29,8 @@
     "rollup": "^2.0.0",
     "tailwindcss": "^3.4.6",
     "typescript": "^5.5.3",
+    "unplugin-auto-import": "^0.18.2",
+    "unplugin-vue-components": "^0.27.3",
     "vite": "^5.3.1",
     "wrangler": "^3.66.0"
   }
