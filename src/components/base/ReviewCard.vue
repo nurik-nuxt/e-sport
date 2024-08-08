@@ -37,7 +37,6 @@ const props = defineProps<{
 .card-wrapper {
   border: 1px solid #000000;
   border-radius: 15px;
-  width: 360px;
   height: 260px;
   padding: 16px;
   display: flex;

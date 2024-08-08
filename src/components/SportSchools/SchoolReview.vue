@@ -38,11 +38,10 @@ const showModal = ref(false)
 .reviews {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-row-gap: 20px;
+  gap: 20px;
 }
 .add-review {
   border-radius: 15px;
-  width: 360px;
   height: 260px;
   padding: 16px;
   border: 1px dashed #000000
