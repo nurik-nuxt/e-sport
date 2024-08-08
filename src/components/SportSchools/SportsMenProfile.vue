@@ -29,9 +29,12 @@ const user = computed(() => {
 <template>
     <div class="sports_men_profile">
         <div class="profile_info flex gap-x-9 px-8">
-            <div class="profile_img border-1 border-black border-solid">
-                <img :src="user?.profileImage" class="w-auto h-auto profile-image" alt="photo"/>
-            </div>
+          <div class="itemSportsMan">
+            <div class="itemImg" :style="{ backgroundImage: 'url(' + user?.profileImage + ')'}"></div>
+          </div>
+<!--            <div class="profile_img border-1 border-black border-solid">-->
+<!--                <img :src="user?.profileImage" class="w-auto h-auto profile-image" alt="photo"/>-->
+<!--            </div>-->
             <div class="profile_info_text flex-col justify-around">
                 <div class="fullname">
                     <div class="fullname_title text-1xl font-bold">
@@ -209,5 +212,15 @@ const user = computed(() => {
     .edit-button:hover{
       background-color: #B10000;
       color: white;
+    }
+    .itemSportsMan{
+      width: 280px;
+      min-width: 280px;
+    }
+    .itemImg{
+      width: 100%;
+      height: 350px;
+      max-height: 350px;
+      position: relative;
     }
 </style>
