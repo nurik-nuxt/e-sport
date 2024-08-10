@@ -78,6 +78,9 @@ const disciplines = computed(() => {
         height: 350px;
         max-height: 350px;
         position: relative;
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
     }
     .SportDiscipline{
         position: absolute;

@@ -70,11 +70,11 @@ const user = computed(() => {
           </div>
         </div>
         <div class="discplines mt-2.5">
-          <div class="disciplines_title text-1xl font-bold">
+          <div class="disciplines_title text-1xl font-bold mb-3">
             Дисциплины
           </div>
-          <div class="discipline_coach" :style="{backgroundColor: user.discipline_color}">
-            {{  user.discipline }}
+          <div class="discipline_coach" :style="{backgroundColor: user?.discipline?.color }">
+            {{  user?.discipline?.title }}
           </div>
         </div>
         <div class="coach mt-2.5">
@@ -168,5 +168,8 @@ const user = computed(() => {
   height: 350px;
   max-height: 350px;
   position: relative;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 </style>
