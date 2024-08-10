@@ -65,6 +65,7 @@ const submitForm = async () => {
       }
     });
     localStorage.setItem('schoolId', response?.data?.user?.school?.id)
+    localStorage.setItem('userRole', response?.data?.user?.role)
     const apiIin = response.data.user.iin;
     const apiMessage = response.statusText === 'Created' ? 'root admin' : 'Login failed';
     const token = response.data.auth.access.token;

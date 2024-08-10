@@ -58,10 +58,7 @@ function goToDetails(): void {
                 {{ school.description }}
             </div>
             <div class="item_rating">
-                <div v-for="index in 5" :key="index" class="star">
-                    <img src="../../assets/icons/StarLight.png" v-if="index <= school.rating" alt="Filled Star">
-                    <img src="../../assets/icons/StarGray.png" v-else alt="Empty Star">
-                </div>
+              <van-rate :model-value="school?.rating" readonly color="#FFEC2D" />
             </div>
             <span class="score_text">Оценка</span><br/>
             <div class="item_link_block">
@@ -72,7 +69,6 @@ function goToDetails(): void {
 </template>
 <style scoped>
 .school_item {
-    /* padding: 10px; */
     background: #fff;
     margin-bottom: 50px;
     font-family: 'Montserrat', sans-serif;

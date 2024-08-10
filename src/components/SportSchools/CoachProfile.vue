@@ -86,10 +86,7 @@ const user = computed(() => {
     </div>
     <div class="ratingBlock px-8 mt-4">
       <div class="item_rating flex">
-        <div v-for="index in 5" :key="index" class="star">
-          <img src="../../assets/icons/StarLight.png" v-if="index <= 4" alt="Filled Star">
-          <img src="../../assets/icons/StarGray.png" v-else alt="Empty Star">
-        </div>
+        <van-rate :model-value="user?.rating" readonly color="#FFEC2D" />
       </div>
       <p class="font-bold mt-2">Рейтинг тренера</p>
     </div>

@@ -35,10 +35,7 @@ const disciplines = computed(() => {
                         {{ sportsman.position }}
                     </div>
                     <div class="ratingStars">
-                        <div v-for="index in 5" :key="index" class="star">
-                            <img src="../../assets/icons/StarLight.png" v-if="index <= sportsman.rating" alt="Filled Star">
-                            <img src="../../assets/icons/StarGray.png" v-else alt="Empty Star">
-                        </div>
+                      <van-rate :model-value="sportsman?.rating" readonly color="#FFEC2D" />
                     </div>
                     <div class="ratingText">
                         рейтинг

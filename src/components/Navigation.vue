@@ -21,6 +21,7 @@ const iin = computed(() => {
 })
 const logout = async () => {
   localStorage.removeItem('schoolId');
+  localStorage.removeItem('userRole');
   await authStore.clearUserData()
   router.push('/QazMap');
 };
