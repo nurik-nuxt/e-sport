@@ -40,16 +40,28 @@ const adminSchoolId = computed(() => {
 const userRole = computed(() => {
   return localStorage.getItem('userRole')
 })
+
+const school = computed(() => {
+  return schoolStore.getCurrentSchool
+})
 </script>
 <template>
     <div class="sports_men_profile">
-        <div class="profile_info flex gap-x-9 px-8">
+      <div class="school_data">
+        <div class="school_title_info">
+          <van-rate :model-value="school?.rating" readonly color="#FFEC2D" />
+          <div class="school_name">
+            {{ school?.name}}
+          </div>
+          <div class="school_address">
+            {{ school?.address }}
+          </div>
+        </div>
+      </div>
+      <div class="profile_info flex gap-x-9 px-8">
           <div class="itemSportsMan">
             <div class="itemImg" :style="{ backgroundImage: 'url(' + user?.profileImage + ')'}"></div>
           </div>
-<!--            <div class="profile_img border-1 border-black border-solid">-->
-<!--                <img :src="user?.profileImage" class="w-auto h-auto profile-image" alt="photo"/>-->
-<!--            </div>-->
             <div class="profile_info_text flex-col justify-around">
                 <div class="fullname">
                     <div class="fullname_title text-1xl font-bold">
@@ -127,7 +139,7 @@ const userRole = computed(() => {
 </template>
 <style scoped>
     .sports_men_profile{
-        margin-top: 5rem;
+        margin-top: 15px;
     }
     .profile_img{
       width: 411px;
@@ -237,5 +249,12 @@ const userRole = computed(() => {
       background-position: center;
       background-size: contain;
       background-repeat: no-repeat;
+    }
+    .school_data {
+      margin-left: 32px;
+    }
+    .school_name{
+      font-weight: 600;
+      font-size: 2rem;
     }
 </style>

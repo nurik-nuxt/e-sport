@@ -87,9 +87,7 @@ const school = computed(() => {
     </div>
     <div v-else-if="school" class="school_data">
         <div class="school_title_info">
-            <div class="school_score">
-                <img src="../../assets/icons/StarLight.png" v-for="index in 5" :key="index"  alt="img"/>
-            </div>
+          <van-rate :model-value="school?.rating" readonly color="#FFEC2D" />
             <div class="school_name">
                 {{ school.name}}
             </div>
