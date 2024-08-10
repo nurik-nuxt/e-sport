@@ -17,7 +17,7 @@ const showModal = ref(false)
 <template>
   <div class="mt-5">
     <div v-if="!showModal" class="reviews">
-      <button v-if="isAuthenticated" @click="showModal = true" class="add-review">Добавить отзыв</button>
+      <button @click="showModal = true" class="add-review">Добавить отзыв</button>
       <review-card
           v-for="review in reviews"
           :key="review.id"
