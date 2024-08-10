@@ -192,6 +192,7 @@ const user = computed(() => {
 }
 .school_data {
   margin-left: 32px;
+  margin-bottom: 15px;
 }
 .school_name{
   font-weight: 600;
