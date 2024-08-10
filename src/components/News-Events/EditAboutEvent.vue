@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted, watchEffect} from 'vue';
 import BaseInput from "@/components/base/BaseInput.vue";
-import { useRouter } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import { useEventStore } from '@/store/eventStore';
 import { useUploadStore } from "@/store/upload";
 import { useApi } from "@/composable/useApi";
@@ -10,6 +10,7 @@ import { useDisciplinesStore } from '@/store/discipline/index';
 import { useEventTypesStore } from '@/store/event-types/index';
 
 const router = useRouter();
+const route = useRoute();
 const eventStore = useEventStore();
 const uploadStore = useUploadStore();
 const citiesStore = useCitiesStore();
@@ -17,18 +18,41 @@ const disciplinesStore = useDisciplinesStore();
 const eventTypesStore = useEventTypesStore();
 
 const selectedEvent = computed(() => eventStore.selectedEvent);
-const preview = ref<string | ArrayBuffer | null>(selectedEvent.value?.thumbnail || null);
-const thumbnail = ref(selectedEvent.value?.thumbnail || '');
-const title = ref(selectedEvent.value?.title || '');
-const organizer = ref(selectedEvent.value?.organizer || '');
-const description = ref(selectedEvent.value?.description || '');
-const prizePool = ref(selectedEvent.value?.prizePool || '');
-const cityId = ref(selectedEvent.value?.city.id || '');
-const typeIds = ref<string[]>(selectedEvent.value?.types.map(type => type.id) || []);
-const startDate = ref(selectedEvent.value?.startDate || '');
-const endDate = ref(selectedEvent.value?.endDate || '');
-const disciplineId = ref(selectedEvent.value?.discipline.id || '');
-const startTime = ref(selectedEvent.value?.startTime || '');
+
+const preview = ref<string | ArrayBuffer | null>(null);
+const thumbnail = ref('');
+const title = ref('');
+const organizer = ref('');
+const description = ref('');
+const prizePool = ref('');
+const cityId = ref('');
+const typeIds = ref('');
+const startDate = ref('');
+const endDate = ref('');
+const disciplineId = ref('');
+const startTime = ref('');
+
+watchEffect(()=>{
+  if(selectedEvent.value){
+    preview.value = selectedEvent.value.thumbnail;
+    thumbnail.value = selectedEvent.value.thumbnail || '';
+    title.value = selectedEvent.value.title || '';
+    organizer.value = selectedEvent.value.organizer || '';
+    description.value = selectedEvent.value.description || '';
+    prizePool.value = selectedEvent.value.prizePool || '';
+    cityId.value = selectedEvent.value.city.id || '';
+    typeIds.value = (selectedEvent.value?.types[0]?.id || '');
+    startDate.value = selectedEvent.value.startDate || '';
+    endDate.value = selectedEvent.value.endDate || '';
+    disciplineId.value = selectedEvent.value.discipline.id || '';
+    startTime.value = selectedEvent.value.startTime || '';
+  }
+})
+const formatDate = (date: string | undefined) => {
+  if (!date) return '';
+  return new Date(date).toISOString().split('T')[0];
+};
+
 
 async function onFileSelected(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
@@ -69,7 +93,7 @@ async function updateEvent() {
     };
     console.log('Request Body:', JSON.stringify(requestBody, null, 2));
     await useApi(`v1/events/${selectedEvent.value.id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -88,9 +112,13 @@ const disciplines = computed(() => disciplinesStore.getDisciplines);
 const eventTypes = computed(() => eventTypesStore.getEventTypes);
 
 onMounted(() => {
+  const eventId = route.params.id as string;
+  eventStore.fetchEventById(eventId);
   citiesStore.fetchCities();
   disciplinesStore.fetchDisciplines();
   eventTypesStore.fetchEventTypes();
+  startDate.value = formatDate(selectedEvent.value?.startDate);
+  endDate.value = formatDate(selectedEvent.value?.endDate);
 });
 </script>
 
@@ -122,7 +150,7 @@ onMounted(() => {
           </div>
           <select v-model="cityId" class="text-center w-full half-input base-input">
             <option value="" disabled selected>
-              Выберите город
+              {{ selectedEvent?.city}}
             </option>
             <option v-for="city in cities" :key="city.id" :value="city.id">
               {{ city.name }}
@@ -170,7 +198,6 @@ onMounted(() => {
         </div>
         <div class="sport-select-block">
           <select v-model="disciplineId" class="sport-type sport-select-block">
-            <option value="" disabled>Выберите дисциплину</option>
             <option v-for="discipline in disciplines" :key="discipline.id" :value="discipline.id">
               {{ discipline.title }}
             </option>
@@ -183,8 +210,7 @@ onMounted(() => {
           Вид / Масштаб мероприятия
         </div>
         <div class="sport-select-block">
-          <select id="event-type" class="sport-type" v-model="typeIds" multiple>
-            <option value="" disabled>Выберите тип мероприятия</option>
+          <select id="event-type" class="sport-type" v-model="typeIds">
             <option v-for="eventType in eventTypes" :key="eventType.id" :value="eventType.id">
               {{ eventType.name }}
             </option>
@@ -221,5 +247,107 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
+.edit-about-event{
+  width: 480px;
+  max-width: 480px;
+}
+.event-title{
+  color: #031954;
+  text-align: center;
+  font-weight: 500;
+  font-size: 18px;
+}
+.base-input{
+  border-radius: 10px;
+  border: 1px solid #031954;
+  width: 100%;
+  max-width: 480px;
+}
+.half-input{
+  width: 230px;
+  height: 40px;
+}
+.description-text{
+  border: 1px solid #031954;
+  border-radius: 10px;
+  height: 90px;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.prize-text{
+  border: 1px solid #031954;
+  border-radius: 10px;
+  height: 70px;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.sport-type{
+  border-radius: 10px;
+  border: 1px solid #031954;
+  width: 100%;
+  text-align: center;
+  color: #000000;
+  font-size: 15px;
+  appearance: none;
+  padding: 10px 0;
+  font-weight: 500;
+}
+.sport-select-block{
+  position: relative;
+}
+.img-arrow-down{
+  right: 15px;
+  top: 17px;
+}
+#fileInput{
+  display: none;
+}
+.file-label{
+  width: 100%;
+  border: 1px solid #000000;
+  color: #69696A;
+  border-radius: 10px;
+  display: flex;
+  padding: 10px 15px;
+  font-weight: 500;
+}
 
+.text-input-file{
+  margin-left: 35px;
+}
+.image-preview {
+  width: 100px;
+  height: auto;
+  margin-top: 10px;
+}
+#upload_btn {
+  padding: 15px 60px;
+  border-radius: 15px;
+  font-size: 16px;
+  border: 1px solid #005703;
+  background-color: #ffffff;
+  transition: all 200ms ease;
+  color: #005703;
+  cursor: pointer;
+  font-weight: 500;
+}
+#upload_btn:hover {
+  background-color: rgba(74, 209, 19, 0.87);
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+.btn_reject{
+  color: #E1253C;
+  border: 1px solid #570000;
+  border-radius: 15px;
+  font-weight: 600;
+  transition: all 200ms ease;
+}
+.btn_reject:hover{
+  color: #e1255d;
+  border: 1px solid #570017;
+  background-color: #ffd3d3;
+}
 </style>

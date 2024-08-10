@@ -13,6 +13,7 @@ const fetchEvents = async () => {
   try {
     const response = await useApi('v1/events');
     events.value = response;
+    console.log(response);
   } catch (err) {
     error.value = err.message || 'An error occurred';
   }
@@ -22,21 +23,19 @@ const getAuthorName = (organizer: string) => {
   return organizer || 'Unknown Organizer';
 };
 
-// const getEventStatus = (event_status: string) => {
-//   switch(event_status) {
-//     case '1': return { name: 'Идет прием заявок', color: 'rgba(74,209,19,0.87)' };
-//     case '2': return { name: 'Прием заявок завершено', color: 'rgba(206,15,1,0.99)' };
-//     case '3': return { name: 'Завершен', color: 'rgb(103,103,103)' };
-//     default: return { name: 'Неизвестная дисциплина', color: '#000000' };
-//   }
-// }
 
-const getEventTypeStyle = (type) => {
+const getEventTypeStyle = (type:any) => {
   const defaultColors = {
     'Первенство Области': '#29FF72',
     'Чемпионат Области': '#E1253C',
     'Unknown Event': '#d7d7d7'
   };
+  if (!type) {
+    return {
+      name: 'Unknown Event',
+      color: defaultColors['Unknown Event']
+    };
+  }
   return {
     name: type.name || 'Unknown Event',
     color: type.color || defaultColors[type.name] || defaultColors['Unknown Event']
@@ -64,8 +63,11 @@ onMounted(fetchEvents);
       <div v-else class="flex flex-wrap gap-y-8 gap-x-4">
         <div v-for="event in events" :key="event.id" class="event-item flex flex-col justify-between">
           <div class="event-param flex gap-x-1">
-            <div class="event-type" :style="{ backgroundColor: event.discipline.color }">
+            <div v-if="event.discipline" class="event-type" :style="{ backgroundColor: event.discipline.color }">
               {{ event.discipline.title }}
+            </div>
+            <div v-else class="event-type" style="background-color: #031954">
+              Дисциплина неизвестно
             </div>
             <div class="event-type types-event" v-for="type in event.types" :key="type.id" :style="{ backgroundColor: getEventTypeStyle(type).color }">
               {{ getEventTypeStyle(type).name }}
@@ -77,7 +79,7 @@ onMounted(fetchEvents);
             </div>
           </div>
           <div class="event-img h-64">
-            <img :src="event.thumbnail" class="event-thumbnail" alt="Нет фото" />
+            <img :src="event.thumbnail" class="event-thumbnail" alt="Фото мероприятия" />
           </div>
           <div class="event-org-details flex flex-row justify-between mt-2.5">
             <div class="event-date-block">

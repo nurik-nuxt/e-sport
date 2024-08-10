@@ -64,7 +64,7 @@ const isAuthenticated = computed(() => !!authStore.authToken);
       </select>
       <img class="icon-down" src="/icons/triangular-arrow-down.png" alt="icon arrow down"/>
     </div>
-    <router-link v-if="isAuthenticated" to="/create-event/create-about-event" class="btn-organise nav-item font-medium text-xl px-6 py-2">
+    <router-link v-if="isAuthenticated" to="/create-event" class="btn-organise nav-item font-medium text-xl px-6 py-2">
       Организовать
     </router-link>
   </div>

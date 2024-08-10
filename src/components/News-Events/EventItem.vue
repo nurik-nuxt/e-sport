@@ -21,18 +21,6 @@ watchEffect(() => {
   }
 });
 
-const getEventTypeStyle = (type) => {
-  const defaultColors = {
-    'Первенство Области': '#29FF72',
-    'Чемпионат Области': '#E1253C',
-    // Add other types with default colors if needed
-    'Unknown Event': '#000000'
-  };
-  return {
-    name: type.name || 'Unknown Event',
-    color: type.color || defaultColors[type.name] || defaultColors['Unknown Event']
-  };
-};
 const getAuthorName = (organizer: string) => {
   return organizer || 'Unknown Organizer';
 };
@@ -69,19 +57,24 @@ const hasWinners = computed(() => {
 <template>
   <div class="event-item-block">
     <div class="word-events">
-      Мероприятия
+      {{ selectedEvent?.title}}
     </div>
     <div class="event-item" v-if="selectedEvent">
       <div class="type-sport">
-        <div class="event-type" v-for="type in selectedEvent.types" :key="type.id" :style="{ backgroundColor: selectedEvent.discipline.color }">
-          {{ getEventTypeStyle(type).name }}
-        </div>
-        <div class="event-name">
-          {{ selectedEvent.name }}
+        <div class="event-discipline-type flex gap-x-4">
+          <div class="event-discipline" :style="{ backgroundColor: selectedEvent.discipline.color }">
+            {{selectedEvent.discipline.title}}
+          </div>
+          <div v-if="selectedEvent && selectedEvent.types.length > 0" class="event-type" :style="{ backgroundColor: selectedEvent.types[0].color || 'defaultColor' }">
+              {{ selectedEvent.types[0].name || 'Unknown Event' }}
+          </div>
+          <div v-else>
+            Масштаб неизвестно
+          </div>
         </div>
         <div class="info-block flex gap-5">
           <div class="photo-and-text-block">
-            <div class="photo-of-event">
+            <div class="photo-of-event mt-5">
               <img :src="selectedEvent.thumbnail || 'https://i.postimg.cc/vTcV4sgF/1472020650855kv-1000x768.jpg'" alt="EventStore Photo">
             </div>
             <div class="full-text-event">
@@ -150,7 +143,7 @@ const hasWinners = computed(() => {
         </div>
       </div>
       <div v-if="isAuthenticated" class="set-event-btn-block">
-        <router-link :to="{ path: '/create-event', query: { source: 'eventItem', eventId: selectedEvent.id } }"  class="set-event-button">
+        <router-link :to="{ path: `/edite-event/${selectedEvent.id}/about-event` }" class="set-event-button">
           <img src="/icons/set_event.png" class="set-event-icon" />
           Управлять
         </router-link>
@@ -178,11 +171,15 @@ const hasWinners = computed(() => {
   width: max-content;
   font-weight: 600;
 }
-.event-name{
-  font-size: 1.5rem;
+.event-discipline, .event-type{
+  font-size: 1rem;
   font-weight: 500;
-  padding: 15px 0;
+  padding: 4px 10px;
+  width: max-content;
+  border-radius: 5px;
+  color: #ffffff;
 }
+
 .photo-and-text-block{
   width: 72% !important;
 }

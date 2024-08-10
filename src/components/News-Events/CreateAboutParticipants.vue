@@ -4,14 +4,14 @@ import {ref, computed, onMounted} from "vue";
 import { useEventStore } from '@/store/eventStore';
 import { useCoachStore } from '@/store/coach/index';
 import AddWinners from "@/components/addItem/addWinners.vue";
+import { useParticipantStore } from '@/store/participant/index';
 
 const eventStore = useEventStore();
 const coachStore = useCoachStore();
+const participantStore = useParticipantStore();
 const selectedEvent = computed(() => eventStore.selectedEvent);
 
-const sportsmen = computed(() => {
-  return selectedEvent.value ? selectedEvent.value.participants : [];
-});
+const sportsmen = computed(() => participantStore.participants);
 
 const cityName = computed(() => {
   return selectedEvent.value && selectedEvent.value.city ? selectedEvent.value.city.name : 'Unknown City';
@@ -48,13 +48,17 @@ onMounted(()=>{
   if (selectedEvent.value && selectedEvent.value.discipline) {
     coachStore.fetchCoach(selectedEvent.value.discipline.id, selectedEvent.value.participants[0]?.id);
   }
+  if (selectedEvent.value) {
+    participantStore.setParticipants(selectedEvent.value.participants);
+    participantStore.setSelectedEventId(selectedEvent.value.id);
+  }
 })
 
 </script>
 
 <template>
   <div class="wrapper">
-    <div class="content">
+    <div class="content ml-4">
       <div class="content-title font-semibold text-2xl mt-9">
         Спортсмены
       </div>
@@ -159,7 +163,7 @@ onMounted(()=>{
       v-if="showWinner"
       @close="hideAddWinner"
       class="add-winners"
-      :event-id="selectedEvent?.id"
+      :event-id="participantStore.selectedEventId"
     />
     <add-participant v-if="showModal" @close="hideAddParticipant" :event-id="selectedEvent?.id" class="add-participant" />
   </div>
@@ -211,7 +215,7 @@ onMounted(()=>{
     background-color: #005703;
   }
   .table-container {
-    margin: 20px;
+    margin-top: 30px;
     overflow-x: auto;
   }
   table {

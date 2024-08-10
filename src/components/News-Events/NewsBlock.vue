@@ -31,16 +31,18 @@ onMounted(() => {
     <div v-if="newsStore.error" class="error-message">
       {{ newsStore.error }}
     </div>
-    <div class="news-list-block ml-8">
-      <div class="news-list flex flex-wrap gap-x-3">
-        <div v-for="news in newsStore.newsList" :key="news.id" class="news-item w-80 h-64 flex flex-col justify-between pt-2">
-          <div class="news-item-title font-semibold text-base">
-            {{ news.title }}
+    <div class="news-list-block ml-8 pb-5">
+      <div class="news-list flex flex-wrap gap-x-3 gap-y-8">
+        <div v-for="news in newsStore.newsList" :key="news.id" class="news-item w-80 flex flex-col justify-between pt-2">
+          <div class="news-item-title-block">
+            <div class="news-item-title font-semibold text-base">
+              {{ news.title }}
+            </div>
           </div>
-          <div class="news-item-content text-gray-600 text-xs">
-            {{truncateContent(news.content)}}
+          <div class="news-item-content h-24 w-full">
+            <img alt="image of news" :src="news.thumbnail" class="h-24 w-full news-img"/>
           </div>
-          <div class="news-city-and-author flex gap-x-5">
+          <div class="news-city-and-author flex justify-between mt-5">
             <div class="new-city-block flex flex-col">
               <span class="text-xs text-gray-600">Дата</span>
               <div class="news-city text-xs font-medium">
@@ -54,7 +56,7 @@ onMounted(() => {
               </div>
             </div>
           </div>
-          <router-link :to="{ name: 'NewsItem', params: { id: news.id } }" class="more-btn">
+          <router-link :to="{ name: 'NewsItem', params: { id: news.id } }" class="more-btn mt-5">
             Подробнее
           </router-link>
         </div>
@@ -97,8 +99,21 @@ onMounted(() => {
     color: white;
   }
   .news-item{
-    border: 1px solid #031954;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px 0px rgba(150,150,150,0.73);
+    -webkit-box-shadow: 5px 5px 10px 0px rgba(150,150,150,0.73);
+    -moz-box-shadow: 5px 5px 10px 0px rgba(150,150,150,0.73);
+    padding: 10px;
+    padding-bottom: 30px;
+  }
+  .news-item-title{
+    display: block;
+    height: 60px;
+    width: 100%;
+    max-height: 60px;
+  }
+  .news-img{
+    object-fit: cover;
+    width: 100%;
   }
 </style>

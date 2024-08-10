@@ -4,8 +4,8 @@ import { useApi } from '@/composable/useApi';
 interface Discipline {
     id: string;
     title: string;
-    iconLink: string;
-    color: string;
+    iconLink: string | null;
+    color: string | null;
     createdAt: string;
     updatedAt: string;
     deletedAt: string | null;
@@ -24,7 +24,7 @@ export const useDisciplinesStore = defineStore('disciplines', {
     actions: {
         async fetchDisciplines() {
             try {
-                this.disciplines = await useApi<Discipline[]>('/v1/disciplines', {
+                this.disciplines = await useApi<Discipline[]>('v1/disciplines', {
                     method: 'GET'
                 });
             } catch (e) {

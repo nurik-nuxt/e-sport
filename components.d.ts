@@ -25,6 +25,7 @@ declare module 'vue' {
     CreateAboutParticipants: typeof import('./src/components/News-Events/CreateAboutParticipants.vue')['default']
     DropDown: typeof import('./src/components/DropDown.vue')['default']
     EditAboutEvent: typeof import('./src/components/News-Events/EditAboutEvent.vue')['default']
+    EditEvent: typeof import('./src/components/News-Events/EditEvent.vue')['default']
     EventItem: typeof import('./src/components/News-Events/EventItem.vue')['default']
     EventsBlock: typeof import('./src/components/News-Events/EventsBlock.vue')['default']
     EventsBlockNav: typeof import('./src/components/News-Events/EventsBlockNav.vue')['default']

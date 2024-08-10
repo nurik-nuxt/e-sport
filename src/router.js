@@ -16,6 +16,9 @@ import CreateAboutEvent from "@/components/News-Events/CreateAboutEvent.vue";
 import CreateAboutParticipants from "@/components/News-Events/CreateAboutParticipants.vue";
 import CoachProfile from "@/components/SportSchools/CoachProfile.vue";
 import NewsItem from "./components/News-Events/NewsItem.vue";
+import EditAboutEvent from "@/components/News-Events/EditAboutEvent.vue";
+import EditEvent from "@/components/News-Events/EditEvent.vue";
+import AddParticipant from "@/components/addItem/addParticipant.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -72,23 +75,28 @@ const router = createRouter({
         {
             path: '/create-event',
             component: AddEvent,
-            redirect: '/create-event/create-about-event',
+        },
+        {
+            path: '/edite-event/:id',
+            component: EditEvent,
+            redirect: '/edite-event/:id/about-event',
             children: [
                 {
-                    path: 'create-about-event',
+                    path: 'about-event',
                     components: {
-                        "createEvent": CreateAboutEvent
+                        default: EditEvent,
+                        editEvent: EditAboutEvent
                     }
                 },
                 {
-                    path: 'create-about-participants',
+                    path: 'participants-event',
                     components: {
-                        "createEvent": CreateAboutParticipants
+                        default: EditEvent,
+                        editEvent: CreateAboutParticipants
                     }
                 }
             ]
         }
-
     ]
 })
 export default router;
