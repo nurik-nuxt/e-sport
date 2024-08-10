@@ -27,6 +27,10 @@ const props = defineProps<{
       <span>Тренерский рейтинг</span>
       <van-rate :model-value="coachingStaff" readonly color="#FFEC2D" />
     </div>
+    <div class="rating-label">
+      <span>Состояние зала</span>
+      <van-rate :model-value="hallCondition" readonly color="#FFEC2D" />
+    </div>
     <div class="review">
       {{ overallDescription }}
     </div>

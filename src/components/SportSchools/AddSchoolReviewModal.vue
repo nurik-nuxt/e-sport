@@ -164,7 +164,7 @@ async function onSubmit() {
             Отменить
           </button>
           <button type="submit" value="Далее" id="upload_btn">
-            Добавить школу
+            Добавить отзыв
           </button>
         </div>
       </form>

@@ -13,6 +13,7 @@ const reviews = computed(() => {
 })
 const isAuthenticated = computed(() => !!authStore.authToken);
 const showModal = ref(false)
+
 </script>
 <template>
   <div class="mt-5">
