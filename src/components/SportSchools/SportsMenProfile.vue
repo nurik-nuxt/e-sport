@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {computed} from "vue";
+import { useSchoolStore } from "@/store/schoolStore";
 
 interface UserProfile {
   name: string;
@@ -18,12 +19,23 @@ interface UserProfile {
 import userData from '../../../public/database/profile.json';
 import {useUserStore} from "@/store/users";
 import {useRoute} from "vue-router";
+import {useAuthStore} from "@/store/auth";
 const testUser = (userData as UserProfile[])[0];
+const authStore = useAuthStore();
+const schoolStore = useSchoolStore();
+const isAuthenticated = computed(() => !!authStore.authToken);
+const schoolId = computed(() => {
+  return schoolStore.getCurrentSchoolId
+})
 
 const userStore = useUserStore();
 const route = useRoute();
 const user = computed(() => {
   return userStore.getCurrentSchoolSportsmens?.find((sportsmen) => sportsmen?.id === route?.params?.id)
+})
+
+const adminSchoolId = computed(() => {
+  return localStorage.getItem('schoolId')
 })
 </script>
 <template>
@@ -85,14 +97,14 @@ const user = computed(() => {
                     <div class="coach_title text-1xl font-bold">
                         Тренера
                     </div>
-                    {{ user.coach }}
+                    {{ user?.coach }}
                 </div>
             </div>
         </div>
         <div class="ratingBlock px-8 mt-4">
             <div class="item_rating flex">
                 <div v-for="index in 5" :key="index" class="star">
-                    <img src="../../assets/icons/StarLight.png" v-if="index <= user.rating" alt="Filled Star">
+                    <img src="../../assets/icons/StarLight.png" v-if="index <= user?.rating" alt="Filled Star">
                     <img src="../../assets/icons/StarGray.png" v-else alt="Empty Star">
                 </div>
             </div>
@@ -103,12 +115,12 @@ const user = computed(() => {
                 Галерея:
             </div>
             <div class="galleryList flex flex-wrap w-full justify-between gap-4">
-                <div class="galleryItem sm:w-1/2 md:w-1/3 lg:w-1/4 p-1" v-for="(image, index) in user.gallery" :key="index">
-                    <img :src="image" class="galleryImage w-full h-auto rounded shadow-lg transition-transform transform hover:scale-105"/>
+                <div class="galleryItem sm:w-1/2 md:w-1/3 lg:w-1/4 p-1" v-for="(image, index) in user?.gallery" :key="index">
+                    <img :src="image" class="galleryImage w-full h-auto rounded shadow-lg transition-transform transform hover:scale-105" alt="alt"/>
                 </div>
             </div>
         </div>
-        <button class="edit-button">
+        <button v-if="isAuthenticated && schoolId === adminSchoolId" class="edit-button">
           Редактировать
         </button>
     </div>

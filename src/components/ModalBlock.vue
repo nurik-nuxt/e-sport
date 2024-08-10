@@ -64,27 +64,19 @@ const submitForm = async () => {
         password: password.value
       }
     });
-    console.log(response);
-    console.log('API response:', response); // Debug log for API response
+    localStorage.setItem('schoolId', response?.data?.user?.school?.id)
     const apiIin = response.data.user.iin;
     const apiMessage = response.statusText === 'Created' ? 'root admin' : 'Login failed';
     const token = response.data.auth.access.token;
-
-    console.log('API response auth:', apiMessage); // Debug log for auth
-    console.log('Token:', token); // Debug log for token
 
     message.value = apiMessage;
     authStore.updateMessage(apiMessage);
     authStore.updateIin(apiIin);
     authStore.setAuthToken(token);
 
-    console.log('Message after dispatch:', message.value); // Debug log
-    console.log('Iin after dispatch:', apiIin); // Debug log
-    console.log('Token after dispatch:', token);
     router.push('/PersonalAccount');
     closeModalLogic();
   } catch (error) {
-    console.error(error);
     const errorMessage = 'Неправильный пароль или ИИН';
     message.value = errorMessage;
     authStore.updateMessage(errorMessage);
