@@ -4,14 +4,6 @@ import {computed} from "vue";
 import {useUserStore} from "@/store/users";
 import { useSchoolStore } from "@/store/schoolStore";
 import {useRoute} from "vue-router";
-import SchoolSchedule from "@/components/SportSchools/SchoolSchedule.vue";
-import SchoolSportsMen from "@/components/SportSchools/SchoolSportsMen.vue";
-import SportsMenProfile from "@/components/SportSchools/SportsMenProfile.vue";
-import SchoolInfo from "@/components/SportSchools/SchoolInfo.vue";
-import SchoolGroups from "@/components/SportSchools/SchoolGroups/SchoolGroups.vue";
-import SchoolCoachList from "@/components/SportSchools/SchoolCoachList.vue";
-import SchoolReview from "@/components/SportSchools/SchoolReview.vue";
-import SchoolNav from "@/components/SportSchools/SchoolNav.vue";
 interface UserProfile {
   name: string;
   surname: string;

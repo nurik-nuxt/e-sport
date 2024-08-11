@@ -56,6 +56,7 @@ declare module 'vue' {
     SchoolSchedule: typeof import('./src/components/SportSchools/SchoolSchedule.vue')['default']
     SchoolScheduleList: typeof import('./src/components/SportSchools/SchoolScheduleList.vue')['default']
     SchoolSportsMen: typeof import('./src/components/SportSchools/SchoolSportsMen.vue')['default']
+    SchoolStatistics: typeof import('./src/components/SportSchools/SchoolStatistics.vue')['default']
     SearchBar: typeof import('./src/components/SearchBar.vue')['default']
     SportSchools: typeof import('./src/components/SportSchools.vue')['default']
     SportsMenProfile: typeof import('./src/components/SportSchools/SportsMenProfile.vue')['default']

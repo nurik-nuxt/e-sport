@@ -17,7 +17,8 @@ import { useCitiesStore } from "@/store/cities";
 import { useUserStore } from "@/store/users";
 import { useDisciplineStore } from "@/store/disciplines";
 import { useGroupStore } from "@/store/groups/groupsStore";
-import SchoolScheduleList from "@/components/SportSchools/SchoolScheduleList.vue";
+import { useStatisticsStore } from "@/store/statistics";
+import SchoolStatistics from "@/components/SportSchools/SchoolStatistics.vue";
 
 const authStore = useAuthStore();
 const citiesStore = useCitiesStore();
@@ -25,7 +26,7 @@ const isAuthenticated = computed(() => !!authStore.authToken);
 const userStore = useUserStore();
 const disciplineStore = useDisciplineStore();
 const groupStore = useGroupStore();
-
+const statisticsStore = useStatisticsStore();
 
 const route = useRoute(); 
 const schoolStore = useSchoolStore();
@@ -72,7 +73,8 @@ onMounted(async () => {
     userStore.loadSportsmensBySchool(<string>route?.params?.id),
     disciplineStore.loadAllDisciplines(),
     groupStore.loadDisciplines(),
-    groupStore.loadGroupsBySchool(<string>route?.params?.id)
+    groupStore.loadGroupsBySchool(<string>route?.params?.id),
+    statisticsStore.loadStatisticsBySchool(<string>route?.params?.id)
   ])
 });
 const school = computed(() => {
@@ -104,6 +106,7 @@ const school = computed(() => {
         <school-schedule v-if="currentView === 'schedule'"/>
         <school-groups v-if="currentView === 'groups'" />
         <school-review v-if="currentView === 'review'" />
+        <school-statistics v-if="currentView === 'statistics'" />
     </div>
     <div v-else>
         Данные не найдены!

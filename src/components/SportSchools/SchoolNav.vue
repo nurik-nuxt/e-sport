@@ -18,6 +18,9 @@
     function goToReviews(){
       emit('switch', 'review');
     }
+    function goStatistics(){
+      emit('switch', 'statistics');
+    }
 </script>
 <template>
     <div class="list_nav">
@@ -42,7 +45,7 @@
         <div class="nav_item" @click="goToReviews">
             Отзывы
         </div>
-        <div class="nav_item">
+        <div class="nav_item" @click="goStatistics">
             Статистика
         </div>
     </div>
