@@ -12,9 +12,11 @@ import {useDisciplineStore} from "@/store/disciplines";
 const uploadStore = useUploadStore();
 const authStore = useAuthStore();
 const disciplineStore = useDisciplineStore();
-
 const schoolStore = useSchoolStore();
 const citiesStore = useCitiesStore();
+const route = useRoute();
+const router = useRouter();
+
 const preview = ref<string | ArrayBuffer | null>(null);
 const lastName = ref('');
 const firstName = ref('');
@@ -30,9 +32,23 @@ const disciplines = ref<Array<{ id: string; title: string }>>([]);
 const serverResponse = ref({});
 const password = ref('');
 const submitAttempted = ref(false);
-const route = useRoute();
-const router = useRouter();
 const profileImage = ref('');
+
+const schoolTitle = computed(() => {
+  return schoolStore.getCurrentSchool?.title
+})
+const schoolCityId = computed(() => {
+  return schoolStore.getCurrentSchool?.city?.id;
+})
+const cityTitle = computed(() => {
+  return citiesStore?.getCities?.find((city) => city.id === schoolCityId.value)?.name
+})
+async function fetchSchoolData() {
+  const schoolId = route.params.id as string;
+  if (schoolId) {
+    await schoolStore.fetchSchoolById(schoolId);
+  }
+}
 
 // Validation of password
 const passwordIsValid = computed(() => {
@@ -65,16 +81,7 @@ async function onFileSelected(event: Event) {
       }
     }
 }
-const schoolTitle = computed(() => {
-  return schoolStore.getCurrentSchool?.title
-})
-const schoolCityId = computed(() => {
-  return schoolStore.getCurrentSchool?.cityId
-})
 
-const cityTitle = computed(() => {
-  return citiesStore?.getCities?.find((city) => city.id === schoolCityId.value)?.name
-})
 
 async function onSubmit() {
   try {
