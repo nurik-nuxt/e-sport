@@ -1,11 +1,51 @@
 <template>
   <div>
-    <h1 class="block-title">Статистика школы</h1>
+    <h1 class="block-title">Cтатистика школ РК</h1>
+    <div class="change-groups-nav">
+      <div class="flex justify-end gap-3 items-center mb-6 pr-3">
+        <div class="group-item w-64">
+          <img class="icon-sport icons" src="/icons/ranking.svg" alt="alt"/>
+          <select v-model="regionId" class="w-full text-base appearance-none choose-sport">
+            <option value="" selected disabled>Регион</option>
+            <option v-for="region in regions" :key="region.id" :value="region.id">
+              {{ region.name }}
+            </option>
+          </select>
+          <img class="icon-polygon icons" src="/icons/polygon-down.png"  alt="alt"/>
+        </div>
+        <div class="group-item w-64">
+          <img class="icon-sport icons" src="/icons/ranking.svg"  alt="alt"/>
+          <select v-model="cityId" class="w-full text-base appearance-none choose-sport">
+            <option value="" selected disabled>Город</option>
+            <option v-for="city in regions?.find((region) => region?.id === regionId)?.cities" :key="city.id" :value="city.id">
+              {{ city.name }}
+            </option>
+          </select>
+          <img class="icon-polygon icons" src="/icons/polygon-down.png"  alt="alt"/>
+        </div>
+        <div class="group-item w-64">
+          <img class="icon-sport icons" src="/icons/ranking.svg" alt="alt"/>
+          <select v-model="schoolId" class="w-full text-base appearance-none choose-sport">
+            <option value="" selected disabled>Школа</option>
+            <option v-for="school in regions?.find((region) => region?.id === regionId)?.cities?.find((city) => city?.id === cityId)?.schools" :key="school.id" :value="school.id">
+              {{ school.name }}
+            </option>
+          </select>
+          <img class="icon-polygon icons" src="/icons/polygon-down.png"  alt="alt"/>
+        </div>
+        <button class="text-base change-btn" @click="search">
+          <img src="../assets/icons/search.svg" alt="search">
+        </button>
+        <button class="text-base refresh" @click="reset">
+          <img src="../assets/icons/refresh.svg" alt="refresh">
+        </button>
+      </div>
+    </div>
     <div class="dashboard">
       <div class="school-rating">
         <h3 class="school-rating-title">Рейтинг школы</h3>
         <div class="overall-rating">
-          <van-rate :model-value="statistics?.schoolRating" readonly color="#FFEC2D" />
+          <van-rate :model-value="statistics?.schoolsRating" readonly color="#FFEC2D" />
           <span>{{ statistics?.reviewCount }} отзывов</span>
         </div>
         <div class="rating-details">
@@ -83,12 +123,38 @@
 
 <script setup>
 import { useStatisticsStore } from "@/store/statistics/index.ts";
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 const statisticsStore = useStatisticsStore();
+
+onMounted(async () => {
+  await Promise.all([
+    statisticsStore.loadStatisticsByFilter(),
+    statisticsStore.loadRegions()
+  ])
+})
 
 const statistics = computed(() => {
   return statisticsStore.getStatistics
 })
+
+const regions = computed(() => {
+  return statisticsStore.getRegions
+})
+
+
+const regionId = ref('')
+const cityId = ref('')
+const schoolId = ref('')
+
+const reset = async () => {
+  regionId.value = '';
+  cityId.value = '';
+  schoolId.value = '';
+  await statisticsStore.loadStatisticsByFilter()
+}
+const search = async () => {
+  await statisticsStore.loadStatisticsByFilter(regionId.value, cityId.value, schoolId.value)
+}
 </script>
 
 <style scoped>
@@ -182,7 +248,7 @@ const statistics = computed(() => {
 }
 
 .disciplines .discipline-bar {
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 .disciplines .bar {
@@ -194,8 +260,10 @@ const statistics = computed(() => {
   font-size: 24px;
   font-weight: 600;
   text-align: left;
-  margin-top: 15px;
+  margin-top: 66px;
   margin-bottom: 25px;
+  margin-left: 2rem;
+  color: #031954;
 }
 
 .school-rating-title {
@@ -209,11 +277,62 @@ const statistics = computed(() => {
   height: 20px;
   border-radius: 100%;
 }
+.group-item {
+  position: relative;
+  color: #031954;
+  font-weight: 500;
+}
+.choose-sport{
+  border: 1px solid #031954;
+  border-radius: 5px;
+  padding: 10px 20px 10px 45px;
+  appearance: none;
+}
+.choose-sport:focus{
+  border: 1px solid #0a39af;
+  box-shadow: 2px -1px 25px -1px rgba(28,255,237,0.7);
+  -webkit-box-shadow: 2px -1px 25px -1px rgba(28,255,237,0.7);
+  -moz-box-shadow: 2px -1px 25px -1px rgba(28,255,237,0.7);
+}
+
+.icons{
+  position: absolute;
+  z-index: 99;
+}
+.icon-sport{
+  left: 12px;
+  top: 10px;
+}
+.icon-polygon{
+  right: 18px;
+  top: 45%;
+}
+.change-btn{
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  border: 1px solid #031954;
+  transition: all 200ms ease;
+}
+.refresh {
+  font-weight: 500;
+  padding: 7px;
+  border-radius: 5px;
+  font-size: 18px;
+  border: 1px solid #E12525;
+  transition: all 200ms ease
+}
 .count {
   font-size: 12px;
   font-weight: 400;
   text-align: left;
   color: #606060;
+}
+.round {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
 }
 .percentage {
   font-size: 12px;

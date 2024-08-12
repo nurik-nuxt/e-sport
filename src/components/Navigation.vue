@@ -68,7 +68,7 @@ const logout = async () => {
                         Расписание тренировок 
                     </div>
                 </a>
-                <a href="#" class="navLink">
+                <a href="#/statistics" class="navLink">
                     <img src="../assets/icons/Analytics.png" alt="img">
                     <div class="navText">
                         Статистика
