@@ -1,31 +1,47 @@
 <script setup lang="ts">
-import { ref, computed,onMounted, defineEmits,defineProps } from 'vue';
-// import { useUsersStore } from '@/store/users/index';
+import { ref, onMounted, defineEmits,defineProps, watch, computed } from 'vue';
 import { useUserStore } from "@/store/users";
 import { useEventStore } from "@/store/eventStore";
-
 import {useApi} from "@/composable/useApi";
+
+const emit = defineEmits(['close']);
 const usersStore = useUserStore();
 const eventStore = useEventStore();
-const emit = defineEmits(['close']);
 const selectedUserIds = ref<string[]>([]);
+const existingParticipants = ref<string[]>([]);
 
 const props = defineProps({
   eventId: String
 });
 
+const schoolId = localStorage.getItem('schoolId');
+
 onMounted(async () => {
-  await usersStore.fetchUsersByRole(2); // Assuming '2' is the role ID for sportsmen
-  await fetchParticipants();
+  if (schoolId) {
+    await usersStore.loadSportsmensBySchool(schoolId);
+  } else {
+    console.error("No school ID found in localStorage");
+  }
 });
 
-const fetchParticipants = async () => {
+const fetchExistingParticipants = async () => {
   try {
-    const participants = computed(() => eventStore.participants);
+    if (props.eventId) {
+      const response = await useApi(`/v1/events/${props.eventId}/participants`, {
+        method: 'GET'
+      });
+      existingParticipants.value = response.map((participant: any) => participant.id);
+      // Initialize selectedUserIds with existing participants
+      selectedUserIds.value = [...existingParticipants.value];
+    }
   } catch (error) {
-    console.error('Failed to fetch participants:', error);
+    console.error('Failed to fetch existing participants:', error);
   }
 };
+
+const availableUsers = computed(() => {
+  return usersStore.getCurrentSchoolSportsmens;
+});
 
 const toggleUserSelection = (userId: string) => {
   const index = selectedUserIds.value.indexOf(userId);
@@ -39,7 +55,8 @@ const toggleUserSelection = (userId: string) => {
 const closeModal = () => {
   emit('close');
 };
-const users = computed(() => usersStore.getUsers);
+
+const users = computed(() => usersStore.getCurrentSchoolSportsmens);
 
 const addSelectedUsersToEvent = async () => {
   try {
@@ -56,7 +73,6 @@ const addSelectedUsersToEvent = async () => {
     console.error('Failed to add users:', error);
   }
 };
-
 </script>
 
 <template>
@@ -68,9 +84,9 @@ const addSelectedUsersToEvent = async () => {
       <div class="add-participant-list">
         <table class="table-auto w-full">
           <tbody>
-          <tr v-for="user in users" :key="user.id">
+          <tr v-for="user in availableUsers" :key="user.id">
             <td>
-              <input type="checkbox" class="checkbox-participant" :value="user.id" @change="toggleUserSelection(user.id)"/>
+              <input type="checkbox" class="checkbox-participant" :value="user.id" @change="toggleUserSelection(user.id)" :checked="selectedUserIds.includes(user.id)" />
             </td>
             <td>{{ user.lastName }} {{ user.firstName }}</td>
             <td class="iin-column">{{ user.iin }}</td>

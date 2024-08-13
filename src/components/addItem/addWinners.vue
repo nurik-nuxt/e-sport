@@ -6,7 +6,7 @@ import BaseInput from "@/components/base/BaseInput.vue";
 
 const emit = defineEmits(['close']);
 const usersStore = useUserStore();
-const selectedWinners = ref(Array(3).fill(null));
+const selectedWinners = ref([{ place: 'gold', participant: null, description: '' }]);
 
 const closeAddWinner = () => {
   emit('close');
@@ -20,76 +20,64 @@ watch(() => props.eventId, (newVal, oldVal) => {
   console.log("Event ID changed from", oldVal, "to", newVal); // This will log the event ID when it changes
 }, { immediate: true });
 
-const users = computed(() => usersStore.getUsers);
+const participants = ref([]);
 
-const participantInputs = ref([
-  { searchText: '', selectedParticipant: null, showList: false },
-  { searchText: '', selectedParticipant: null, showList: false },
-  { searchText: '', selectedParticipant: null, showList: false }
-]);
-
+// Fetch participants for the event
+const fetchEventParticipants  = async () => {
+  try {
+    const response = await useApi(`v1/events/${props.eventId}`);
+    participants.value = response.participants;
+  } catch (error) {
+    console.error('Failed to fetch participants:', error);
+  }
+};
+// Filter participants based on the search input
 const filteredParticipants = (index) => {
-  return users.value.filter(user =>
-      `${user.firstName} ${user.lastName}`.toLowerCase().includes(participantInputs.value[index].searchText.toLowerCase())
+  return participants.value.filter(user =>
+      `${user.firstName} ${user.lastName}`.toLowerCase().includes(selectedWinners.value[index].searchText.toLowerCase())
   );
 };
-// Selects a participant and assigns it to a specific position (gold, silver, bronze)
+// Select a participant and assign it to a specific position (gold, silver, bronze)
 const selectParticipant = (index, participant) => {
-  participantInputs.value[index].selectedParticipant = participant;
-  participantInputs.value[index].searchText = `${participant.firstName} ${participant.lastName}`;
-  participantInputs.value[index].showList = false;
-  selectWinner(index, participant);
-};
-
-// Use the selectWinner function to update the selectedWinners array
-const selectWinner = (index, participant) => {
-  selectedWinners.value[index] = participant;
+  selectedWinners.value[index].participant = participant;
+  selectedWinners.value[index].searchText = `${participant.firstName} ${participant.lastName}`;
+  selectedWinners.value[index].showList = false;
 };
 
 const focusInput = (index) => {
-  participantInputs.value[index].showList = true; // Показать список при фокусе
+  selectedWinners.value[index].showList = true;
 };
 
 const blurInput = (index) => {
   setTimeout(() => {
-    participantInputs.value[index].showList = false; // Скрыть список после потери фокуса
-  }, 200); // Задержка для обработки клика по элементу списка
+    selectedWinners.value[index].showList = false;
+    }, 200);
 };
 
 const deleteParticipant = (index) => {
-  participantInputs.value[index].selectedParticipant = null;
-  participantInputs.value[index].searchText = '';
-  selectedWinners.value[index] = null;
+  selectedWinners.value.splice(index, 1);
 };
 
-const getPlaceText = (index) => {
-  switch (index) {
-    case 0: return 'Первое';
-    case 1: return 'Второе';
-    case 2: return 'Третье';
-    default: return 'Участник';
-  }
+const addNewWinnerRow = () => {
+  selectedWinners.value.push({ place: '', participant: null, description: '' });
 };
 
 const saveWinners = async () => {
-  for (const [index, winner] of selectedWinners.value.entries()) {
-    if (winner) {
+  for (const winner of selectedWinners.value) {
+    if (winner.participant) {
       const requestData = {
         eventId: props.eventId,
-        userId: winner.id,
-        medal: ['gold', 'silver', 'bronze'][index]
+        userId: winner.participant.id,
+        medal: winner.place,
+        description: winner.description
       };
       console.log('Sending request:', requestData);
-      try{
+      try {
         await useApi('v1/winners', {
           method: 'POST',
-          data: {
-            eventId: props.eventId,
-            userId: winner.id,
-            medal: ['gold', 'silver', 'bronze'][index]
-          }
+          data: requestData
         });
-      }catch(error){
+      } catch (error) {
         console.error('Failed to save winner:', error);
       }
     }
@@ -98,7 +86,7 @@ const saveWinners = async () => {
 };
 
 onMounted(async () => {
-  await usersStore.fetchUsersByRole(2);
+  await fetchEventParticipants();
 });
 
 </script>
@@ -119,30 +107,46 @@ onMounted(async () => {
               <th class="text-left py-2 px-4">Место</th>
               <th class="text-left py-2 px-4">ФИО</th>
               <th class="text-left py-2 px-4">Школа</th>
+              <th class="text-left py-2 px-4">Описание</th>
+              <th class="text-left py-2 px-4">Удалить</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(input, index) in participantInputs" :key="index">
-              <td class="py-2 px-4">{{ getPlaceText(index) }}</td>
+            <tr v-for="(winner, index) in selectedWinners" :key="index">
+              <td class="py-2 px-4">
+                <select v-model="winner.place" class="w-full">
+                  <option value="" disabled>Выберите место</option>
+                  <option value="gold">Первое</option>
+                  <option value="silver">Второе</option>
+                  <option value="bronze">Третье</option>
+                </select>
+              </td>
               <td class="py-2 px-4 relative">
                 <base-input
-                    v-model="input.searchText"
+                    v-model="winner.searchText"
                     @focus="focusInput(index)"
                     @blur="blurInput(index)"
                     placeholder="Введите ФИО"
                 />
-                <ul v-if="input.showList && filteredParticipants(index).length" class="absolute bg-white border border-gray-300 w-full mt-1 max-h-48 overflow-y-auto z-50">
+                <ul v-if="winner.showList && filteredParticipants(index).length" class="absolute bg-white border border-gray-300 w-full mt-1 max-h-48 overflow-y-auto z-50">
                   <li
                       v-for="participant in filteredParticipants(index)"
                       :key="participant.id"
                       @click="selectParticipant(index, participant)"
                       class="p-2 cursor-pointer hover:bg-gray-100"
                   >
-                    {{ participant.firstName }}{{ participant.lastName }}
+                    {{ participant.firstName }} {{ participant.lastName }}
                   </li>
                 </ul>
               </td>
-<!--              <td class="py-2 px-4">{{ input.selectedParticipant ? input.selectedParticipant.school : 'Выберите участника' }}</td>-->
+              <td class="py-2 px-4">{{ winner.participant ? winner.participant.school.name : 'Выберите участника' }}</td>
+              <td class="py-2 px-4">
+                <base-input
+                    v-model="winner.description"
+                    placeholder="Описание"
+                    maxlength="15"
+                />
+              </td>
               <td class="py-2 px-4 text-right">
                 <button @click="deleteParticipant(index)" class="bg-red-500 text-white px-3 py-1 rounded">
                   x
@@ -154,16 +158,19 @@ onMounted(async () => {
         </div>
       </div>
       <div class="btns-add-and-back">
-        <div class="btn-back">
-          <button @click="closeAddWinner" class="btn-back-route">
-            Назад
-          </button>
-        </div>
+        <button @click="addNewWinnerRow" class="bg-blue-500 text-white px-4 py-2 rounded">
+          Добавить победителя
+        </button>
         <div class="add-btn">
           <button @click="saveWinners" class="btn-add-route">
             Сохранить
           </button>
         </div>
+      </div>
+      <div class="btn-back">
+        <button @click="closeAddWinner" class="btn-back-route">
+          Назад
+        </button>
       </div>
     </div>
   </div>
@@ -251,6 +258,11 @@ button:hover {
 .btn-add-route:hover{
   color: white;
   background-color: #005703;
+}
+.btn-back{
+  position: absolute;
+  top: 20px;
+  right: 30px;
 }
 
 

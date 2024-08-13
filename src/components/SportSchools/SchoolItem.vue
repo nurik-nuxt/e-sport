@@ -31,6 +31,13 @@ function goToDetails(): void {
         console.error('No school ID provided for routing');
     }
 }
+// TruncateText function to limit text length
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return text.slice(0, maxLength) + '...';
+}
 
 </script>
 <template>
@@ -39,10 +46,10 @@ function goToDetails(): void {
             <img v-if="school?.images" :src="school?.images[0]" alt="Image of school" class="item_image">
             <img v-else src="https://i.postimg.cc/jjSq1VMQ/item-1.png" alt="Image of school" class="item_image">
             <div class="item_title">
-                {{ school.title }}
+                {{truncateText(school.title, 20)}}
             </div>
             <div class="item_address">
-                {{ school.address }}
+                {{ truncateText(school.address, 20)}}
             </div>
             <div class="item_categories">
                 <div 
@@ -55,7 +62,7 @@ function goToDetails(): void {
                 </div>
             </div>
             <div class="item_description">
-                {{ school.description }}
+              {{ truncateText(school.description, 135) }}
             </div>
             <div class="item_rating">
               <van-rate :model-value="school?.rating" readonly color="#FFEC2D" />
@@ -74,20 +81,25 @@ function goToDetails(): void {
     font-family: 'Montserrat', sans-serif;
     width: 100%; 
     max-width: 350px;
+    min-width: 270px;
     display: flex;
     flex-direction: column;
-    align-items: left; /* Центрирование содержимого по горизонтали */
-    padding: 10px;
+    align-items: left;
+    padding: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 15px;
 }
 .item_image {
     width: 100%;
     height: 208px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 .item_title {
     margin: 16px 0 0 15px;
     font-size: 20px;
     font-weight: 500;
+    height: 55px;
 }
 .item_address {
     margin-left: 15px;
@@ -111,6 +123,7 @@ function goToDetails(): void {
     font-size: .75rem;
     font-weight: 500;
     color: #606060;
+    height: 70px;
 }
 .item_rating {
     display: flex;

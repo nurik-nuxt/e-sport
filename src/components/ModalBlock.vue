@@ -69,7 +69,6 @@ const submitForm = async () => {
     const apiIin = response.data.user.iin;
     const apiMessage = response.statusText === 'Created' ? 'root admin' : 'Login failed';
     const token = response.data.auth.access.token;
-
     message.value = apiMessage;
     authStore.updateMessage(apiMessage);
     authStore.updateIin(apiIin);

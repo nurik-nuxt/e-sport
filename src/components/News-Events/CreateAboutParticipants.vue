@@ -53,7 +53,9 @@ onMounted(()=>{
     participantStore.setSelectedEventId(selectedEvent.value.id);
   }
 })
-
+const schoolId = localStorage.getItem('schoolId');
+const userRole = localStorage.getItem('userRole');
+console.log('School ID:', schoolId, 'User Role:', userRole);
 </script>
 
 <template>

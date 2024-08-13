@@ -35,24 +35,17 @@ onMounted(() => {
       <div class="news-list flex flex-wrap gap-x-3 gap-y-8">
         <div v-for="news in newsStore.newsList" :key="news.id" class="news-item w-80 flex flex-col justify-between pt-2">
           <div class="news-item-title-block">
-            <div class="news-item-title font-semibold text-base">
-              {{ news.title }}
+            <div class="news-item-content h-40 w-full">
+              <img alt="image of news" :src="news.thumbnail" class="h-40 w-full news-img"/>
             </div>
-          </div>
-          <div class="news-item-content h-24 w-full">
-            <img alt="image of news" :src="news.thumbnail" class="h-24 w-full news-img"/>
+            <div class="news-item-title font-semibold text-base text-center">
+              {{ truncateContent(news.title, 80 ) }}
+            </div>
           </div>
           <div class="news-city-and-author flex justify-between mt-5">
             <div class="new-city-block flex flex-col">
-              <span class="text-xs text-gray-600">Дата</span>
               <div class="news-city text-xs font-medium">
                 {{ new Date(news.createdAt).toLocaleDateString() }}
-              </div>
-            </div>
-            <div class="author-block flex flex-col">
-              <span class="text-xs text-gray-600">Автор</span>
-              <div class="news-author text-xs font-medium">
-                {{ news.author.firstName }} {{ news.author.lastName }}
               </div>
             </div>
           </div>
@@ -108,7 +101,7 @@ onMounted(() => {
   }
   .news-item-title{
     display: block;
-    height: 60px;
+    height: 80px;
     width: 100%;
     max-height: 60px;
   }
