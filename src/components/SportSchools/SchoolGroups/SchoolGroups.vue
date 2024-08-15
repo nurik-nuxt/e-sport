@@ -5,7 +5,7 @@ import {Group, useGroupStore} from '@/store/groups/groupsStore';
 import AddSchoolGroup from "@/components/SportSchools/SchoolGroups/AddSchoolGroup.vue";
 import {useRoute} from "vue-router";
 import {useAuthStore} from "@/store/auth";
-
+import AddSportsmenToGroup from "@/components/SportSchools/AddSportsmenToGroup.vue";
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => !!authStore.authToken);
 const groupStore = useGroupStore();
@@ -44,6 +44,30 @@ onMounted(async () => {
   await groupStore.loadDisciplines();
   await groupStore.loadCoaches();
 });
+
+const showGroupMembers = ref<boolean>(false);
+const showMemberAddModal = ref<boolean>(false)
+const currentGroupId = ref('')
+const openGroup = async (groupId: string) => {
+  currentGroupId.value = groupId;
+  showGroupMembers.value = true;
+  await groupStore.loadGroupMembersByGroupId(groupId);
+}
+
+const currentGroupMembers = computed(() => {
+  return groupStore.currentGroupMembers
+})
+const group = computed(() => {
+  return groupStore.getCurrentSchoolGroups?.find((item) => item.id === currentGroupId.value)
+})
+const deleteSportsmen = async (id: string) => {
+  const membersId = [`${id}`];
+  await groupStore.deleteSportsmenToGroup(currentGroupId.value, membersId).then(async (res) => {
+    if (res?.id) {
+      await groupStore.loadGroupMembersByGroupId(currentGroupId.value)
+    }
+  })
+}
 </script>
 <template>
   <div class="change-groups">
@@ -54,52 +78,55 @@ onMounted(async () => {
       <div class="change-groups-nav">
         <div class="group-list-nav mt-3 flex flex-wrap gap-x-1 gap-y-2 justify-between">
           <div class="group-item w-64">
-            <img class="icon-sport icons" src="/icons/type-sport.png" />
+            <img class="icon-sport icons" src="/icons/type-sport.png"  alt="alt"/>
               <select class="w-full text-base appearance-none choose-sport">
                 <option value="" selected disabled>Вид спорта</option>
                 <option v-for="discipline in disciplines" :key="discipline.id" :value="discipline.id">
                   {{ discipline.title }}
                 </option>
               </select>
-              <img class="icon-polygon icons" src="/icons/polygon-down.png" />
+              <img class="icon-polygon icons" src="/icons/polygon-down.png" alt="alt"/>
             </div>
             <div class="group-item w-72">
-              <img class="icon-sport icons" src="/icons/profile-img.png" />
+              <img class="icon-sport icons" src="/icons/profile-img.png"  alt="alt"/>
               <select class="w-full text-base appearance-none choose-sport">
                 <option value="" selected disabled>Тренер</option>
                 <option v-for="coach in coaches" :key="coach.id" :value="coach.id">
                   {{ coach.firstName }} {{ coach.middleName }} {{ coach.lastName }}
                 </option>
               </select>
-              <img class="icon-polygon icons" src="/icons/polygon-down.png" />
+              <img class="icon-polygon icons" src="/icons/polygon-down.png"  alt="alt"/>
             </div>
             <div class="group-item w-48">
-              <img class="icon-sport icons" src="/icons/age-icon.png" />
+              <img class="icon-sport icons" src="/icons/age-icon.png" alt="alt"/>
               <select class="w-full text-base appearance-none choose-sport">
                 <option value="" selected disabled>Возрастная</option>
                 <option value="football">Младшая</option>
                 <option value="football">Старшая</option>
               </select>
-              <img class="icon-polygon icons" src="/icons/polygon-down.png" />
+              <img class="icon-polygon icons" src="/icons/polygon-down.png" alt="alt"/>
             </div>
             <div class="group-item w-48">
-              <img class="icon-sport icons" src="/icons/profile-img.png" />
+              <img class="icon-sport icons" src="/icons/profile-img.png" alt="alt"/>
               <select class="w-full text-base appearance-none choose-sport">
                 <option value="" selected disabled>Цена /мес</option>
                 <option value="12000">12000</option>
                 <option value="30000">30000</option>
               </select>
-              <img class="icon-polygon icons" src="/icons/polygon-down.png" />
+              <img class="icon-polygon icons" src="/icons/polygon-down.png" alt="alt"/>
             </div>
             <div class="group-item w-48">
-              <button v-if="isAuthenticated" @click="openAddGroupModal" class="w-48 text-base change-btn">
+              <button v-if="isAuthenticated && !showGroupMembers" @click="openAddGroupModal" class="w-48 text-base change-btn">
                 Добавить группу
+              </button>
+              <button v-if="isAuthenticated && showGroupMembers" @click="showMemberAddModal = true" class="w-48 text-base change-btn justify-center">
+                Добавить
               </button>
             </div>
         </div>
       </div>
     </div>
-    <div class="table-groups mt-16" v-if="groupsBySchool.length">
+    <div class="table-groups mt-16" v-if="groupsBySchool.length && !showGroupMembers">
       <table>
         <thead>
         <tr>
@@ -108,7 +135,7 @@ onMounted(async () => {
           <th>Тренер</th>
           <th>Группа</th>
           <th>Стоимость</th>
-          <th><img src="/icons/setting.png" /></th> <!-- Column for icons -->
+          <th><img src="/icons/setting.png"  alt="alt"/></th> <!-- Column for icons -->
         </tr>
         </thead>
         <tbody>
@@ -121,15 +148,50 @@ onMounted(async () => {
           <td>{{ group.name }}</td>
           <td>{{ group.price }}</td>
           <td>
-            <router-link to="">
+            <button @click="openGroup(group.id)">
               <img src="/icons/set-triple-dots.png" alt="Icon">
-            </router-link>
+            </button>
           </td>
         </tr>
         </tbody>
       </table>
     </div>
+    <div v-if="showGroupMembers">
+      <div class="group-info my-4 flex justify-between items-center">
+        <div>Группа: {{ group?.name }} | {{ group?.discipline?.title }} | {{ group?.coach?.firstName }} {{ group?.coach?.lastName }}</div>
+        <button class="w-48 text-base exit-btn" @click="showGroupMembers = false">
+          Выйти
+        </button>
+      </div>
+      <div>
+        <table>
+          <thead>
+          <tr>
+            <th>№</th>
+            <th>Спортсмен</th>
+            <th>ИИН</th>
+            <th><img src="/icons/setting.png"  alt="alt"/></th> <!-- Column for icons -->
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="(member, index) in currentGroupMembers" :key="member.id" :style="getRowStyle(group)" class="backdrop-contrast-200">
+            <td>
+              {{ index + 1 }}
+            </td>
+            <td>{{ member?.firstName }} {{ member?.lastName }}</td>
+            <td>{{ member?.iin }}</td>
+            <td>
+              <button @click="deleteSportsmen(member.id)">
+                <img src="/icons/delete_record.png" alt="Icon">
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <add-school-group v-if="isModalOpen" @close="closeAddGroupModal" :school-id="schoolId"/>
+    <add-sportsmen-to-group v-if="showMemberAddModal" @close="showMemberAddModal = false" :group-id="currentGroupId" />
   </div>
 </template>
 <style scoped>
@@ -169,6 +231,18 @@ onMounted(async () => {
   color: #fff;
   cursor: pointer;
   border: 1px solid #ffffff;
+}
+.exit-btn {
+  color: white;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 5px;
+  font-size: 18px;
+  border: 1px solid #031954;
+  transition: all 200ms ease;
+  display: flex;
+  background: #031954;
+  justify-content: center;
 }
 .change-btn{
   color: #031954;
@@ -212,5 +286,11 @@ tr:nth-child(1) {
 }
 button {
   cursor: pointer;
+}
+.group-info {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: left;
+  color: #000000;
 }
 </style>

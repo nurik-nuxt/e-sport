@@ -16,6 +16,7 @@ declare module 'vue' {
     AddSchoolPage: typeof import('./src/components/addItem/addSchoolPage.vue')['default']
     AddSchoolReviewModal: typeof import('./src/components/SportSchools/AddSchoolReviewModal.vue')['default']
     AddSportsmanProfile: typeof import('./src/components/addItem/addSportsmanProfile.vue')['default']
+    AddSportsmenToGroup: typeof import('./src/components/SportSchools/AddSportsmenToGroup.vue')['default']
     AddWinners: typeof import('./src/components/addItem/addWinners.vue')['default']
     BaseButton: typeof import('./src/components/base/BaseButton.vue')['default']
     BaseInput: typeof import('./src/components/base/BaseInput.vue')['default']

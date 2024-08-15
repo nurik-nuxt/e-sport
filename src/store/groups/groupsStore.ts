@@ -38,11 +38,13 @@ export const useGroupStore = defineStore('groupStore',{
         disciplines: [] as Discipline[],
         coaches: [] as Coach[],
         isLoading: false,
+        currentGroupMembers: [] as any
     }),
     getters: {
         getCurrentSchoolGroups: (state) => state.currentSchoolGroups,
         getDisciplines: (state) => state.disciplines,
         getCoaches: (state) => state.coaches,
+        getCurrentGroupMembers: (state) => state.currentGroupMembers
     },
 
     actions: {
@@ -81,6 +83,44 @@ export const useGroupStore = defineStore('groupStore',{
                 }));
             } catch (error) {
                 console.error('Failed to load coaches:', error);
+            }
+        },
+
+        async loadGroupMembersByGroupId(id: string) {
+            try {
+                this.currentGroupMembers = await useApi(`/v1/groups/${id}/members`, {
+                    method: 'GET'
+                });
+            } catch (e) {
+                console.error(e)
+            }
+        },
+
+        async addSportsmenToGroup(id: string, memberIds: string[]) {
+            try {
+                const response = await useApi(`/v1/groups/${id}/members`, {
+                    method: 'PUT',
+                    data: {
+                        memberIds
+                    }
+                })
+                console.log(response)
+                return response;
+            } catch (e) {
+                console.error(e)
+            }
+        },
+
+        async deleteSportsmenToGroup(id: string, memberIds: string[]) {
+            try {
+                return await useApi(`/v1/groups/${id}/members`, {
+                    method: 'DELETE',
+                    data: {
+                        memberIds
+                    }
+                });
+            } catch (e) {
+                console.error(e)
             }
         }
     }
