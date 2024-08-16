@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useEventStore } from '@/store/eventStore';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from "@/store/auth";
@@ -13,13 +13,13 @@ const selectedEvent = computed(() => {
   return eventStore.selectedEvent;
 });
 
-watchEffect(() => {
-  const eventId = route.params.id as string;
-  if (!selectedEvent.value || selectedEvent.value.id !== eventId) {
-    console.log("Mismatch detected or no selected event. Fetching event based on route id:", eventId);
-    eventStore.fetchEventById(eventId);
+const eventId = computed(() => route.params.id || route.query.selectedEventId);
+
+watch(eventId, (newEventId) => {
+  if (newEventId && (!selectedEvent.value || selectedEvent.value.id !== newEventId)) {
+    eventStore.fetchEventById(newEventId);
   }
-});
+}, { immediate: true });
 
 const getAuthorName = (organizer: string) => {
   return organizer || 'Unknown Organizer';
@@ -52,6 +52,9 @@ const hasWinners = computed(() => {
   return selectedEvent.value && selectedEvent.value.winners && selectedEvent.value.winners.length > 0;
 });
 
+const isAuthor = computed(() => {
+  return selectedEvent.value && authStore.iin === selectedEvent.value.createdBy?.iin; // Compare the authenticated user's IIN with createdBy IIN
+});
 
 </script>
 <template>
@@ -119,7 +122,9 @@ const hasWinners = computed(() => {
                     <img :src="winner.user.profileImage" class="w-12 h-12 border-4 rounded-full" />
                   </div>
                   <div class="winner-fullname flex mt-3 font-medium">
-                    {{ winner.user.firstName }} {{ winner.user.lastName }} - {{ getMedalMessage(winner.medal) }}
+                    <router-link :to="{ path: `/sportsmen-profile/${winner.user.id}` }" class="participant-link">
+                      {{ winner.user.firstName }} {{ winner.user.lastName }} - {{ getMedalMessage(winner.medal) }}
+                    </router-link>
                   </div>
                 </div>
               </div>
@@ -136,17 +141,26 @@ const hasWinners = computed(() => {
                 Участники:
               </div>
               <div class="participant-item" v-for="participant in selectedEvent.participants" :key="participant.id">
-                {{ participant.firstName }} {{ participant.lastName }}
+                <router-link :to="{ path: `/sportsmen-profile/${participant.id}` }" class="participant-link">
+                  {{ participant.firstName }} {{ participant.lastName }}
+                </router-link>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div v-if="isAuthenticated" class="set-event-btn-block">
-        <router-link :to="{ path: `/edite-event/${selectedEvent.id}/about-event` }" class="set-event-button">
-          <img src="/icons/set_event.png" class="set-event-icon" />
-          Управлять
-        </router-link>
+        <div v-if="isAuthor">
+          <router-link :to="{ path: `/edite-event/${selectedEvent.id}/about-event` }" class="set-event-button">
+            <img src="/icons/set_event.png" class="set-event-icon" />
+            Управлять
+          </router-link>
+        </div>
+        <div v-if="!isAuthor">
+          <router-link v-if="isAuthenticated" :to="{ path: `/edite-event/${selectedEvent.id}/only-request-participation` }" class="apply-event-button">
+            Подать заявку
+          </router-link>
+        </div>
       </div>
     </div>
     <div v-else>
@@ -214,5 +228,23 @@ const hasWinners = computed(() => {
   position: absolute;
   top: 12px;
   left: 20px;
+}
+.apply-event-button{
+  padding: 15px;
+  border: 1px solid #031954;
+  border-radius: 5px;
+  color: #031954;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 200ms ease;
+}
+.apply-event-button:hover{
+  color: white;
+  background-color: #031954;
+}
+.participant-link:hover {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

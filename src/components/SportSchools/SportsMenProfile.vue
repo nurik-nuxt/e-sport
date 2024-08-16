@@ -1,49 +1,43 @@
 <script setup lang="ts">
-import {computed} from "vue";
+import {computed, ref, onMounted} from "vue";
 import { useSchoolStore } from "@/store/schoolStore";
-
-interface UserProfile {
-  name: string;
-  surname: string;
-  position: string;
-  biography: string;
-  status: string;
-  photo: string;
-  discipline: string;
-  coach: string;
-  text: string;
-  rating: number;
-  gallery: string[];
-  awards: string[];
-}
-import userData from '../../../public/database/profile.json';
-import {useUserStore} from "@/store/users";
 import {useRoute} from "vue-router";
 import {useAuthStore} from "@/store/auth";
-const testUser = (userData as UserProfile[])[0];
+import { useApi } from "@/composable/useApi";
+
 const authStore = useAuthStore();
 const schoolStore = useSchoolStore();
-const isAuthenticated = computed(() => !!authStore.authToken);
-const schoolId = computed(() => {
-  return schoolStore.getCurrentSchoolId
-})
-
-const userStore = useUserStore();
 const route = useRoute();
-const user = computed(() => {
-  return userStore.getCurrentSchoolSportsmens?.find((sportsmen) => sportsmen?.id === route?.params?.id)
-})
 
-const adminSchoolId = computed(() => {
-  return localStorage.getItem('schoolId')
-})
-const userRole = computed(() => {
-  return localStorage.getItem('userRole')
-})
+const isAuthenticated = computed(() => !!authStore.authToken);
+const schoolId = computed(() => schoolStore.getCurrentSchoolId);
+const adminSchoolId = computed(() => localStorage.getItem('schoolId'));
+const userRole = computed(() => localStorage.getItem('userRole'));
+const user = ref(null); // Ref for storing the user data
+const school = computed(() => schoolStore.getCurrentSchool);
 
-const school = computed(() => {
-  return schoolStore.getCurrentSchool
-})
+const fetchUserData = async () => {
+  try {
+    const userId = route.params.id; // Get the userId from route params
+    const response = await useApi(`v1/users/${userId}`); // Fetch user data using the endpoint
+    user.value = response.user; // Store the response user data
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+  }
+};
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+  return date.toLocaleDateString('ru-RU', options); // Convert to Russian locale, adjust as needed
+}
+
+onMounted(() => {
+  fetchUserData();
+});
 </script>
 <template>
     <div class="sports_men_profile">
@@ -83,22 +77,31 @@ const school = computed(() => {
                     <div class="award_title text-1xl font-bold">
                         Награды
                     </div>
-                    <div class="award_list flex flex-col mt-2 h-24 overflow-y-auto">
-                        <div v-for="item in testUser.awards" :key="item.id" class="award_item">
-                            <p class="flex" target="_blank">
-                                <img :src="item.img" :alt="`Photo of ${item.text}`" class="size-7">
-                                <span class="mt-1">{{ item.text }}</span>
+                    <div v-if="user?.awards?.length" class="award_list flex flex-col mt-2 h-24 overflow-y-auto">
+                        <div v-for="(item, index) in user.awards" :key="index" class="award_item">
+                            <router-link
+                                :to="{
+                                name: 'EventItem',
+                                params: { id: item.event.id },
+                                query: { selectedEventId: item.event.id }
+                              }"
+                              class="link-event"
+                            >
+                              <p class="flex" target="_blank">
+                                <img :src="item.iconLink || 'https://i.postimg.cc/yxzNPBrP/3rd-Place-Medal.png'" :alt="`Фото ${item.text}`" class="size-7">
+                                <span class="mt-1">{{ item.tournamentName || 'Турнир не указан' }}</span>
                                 <span class="mt-1 px-4">-</span>
-                                <span class="mt-1">{{item.date_event}}</span>
-                                <span v-for="eventType in item.event_types"
-                                      :key="eventType.id"
+                                <span class="mt-1">{{formatDate( item.event.endDate) || 'Дата не указана'}}</span>
+                                <span v-for="eventType in item.types" :key="eventType.id"
                                       class="ml-4 rounded event-type-class"
                                       :style="{ backgroundColor: eventType.color }">
-                                  {{ eventType.name }}
+                                  {{ eventType.name || 'Тип не указан' }}
                                 </span>
-                            </p>
+                              </p>
+                            </router-link>
                         </div>
                     </div>
+                  <p v-else>Награды отсутствуют</p>
                 </div>
                 <div class="discplines mt-2.5">
                     <div class="disciplines_title text-1xl font-bold mb-3">
@@ -112,7 +115,8 @@ const school = computed(() => {
                     <div class="coach_title text-1xl font-bold">
                         Тренера
                     </div>
-                    {{ user?.coach }}
+                    <div v-if="user?.coach">{{ user.coach }}</div>
+                    <p v-else>Тренер не указан</p>
                 </div>
             </div>
         </div>
@@ -257,5 +261,9 @@ const school = computed(() => {
     .school_name{
       font-weight: 600;
       font-size: 2rem;
+    }
+    .link-event:hover{
+      color: #0046ff;
+      text-decoration: underline;
     }
 </style>

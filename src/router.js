@@ -17,6 +17,7 @@ import NewsItem from "./components/News-Events/NewsItem.vue";
 import EditAboutEvent from "@/components/News-Events/EditAboutEvent.vue";
 import EditEvent from "@/components/News-Events/EditEvent.vue";
 import Statistics from "./views/statistics.vue";
+import OnlyRequestParticipation from "@/components/News-Events/OnlyRequestParticipation.vue";
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -64,10 +65,8 @@ const router = createRouter({
         },
         {
             path: '/events/:id',
-            components: {
-                default: EventItem,
-                // newsEventsPage: EventItem
-            }
+            name: 'EventItem',
+            component: EventItem,
         },
         {
             path: '/create-event',
@@ -91,8 +90,12 @@ const router = createRouter({
                         default: EditEvent,
                         editEvent: CreateAboutParticipants
                     }
-                }
+                },
             ]
+        },
+        {
+            path: '/edite-event/:id/only-request-participation',
+            component: OnlyRequestParticipation,
         }
     ]
 })

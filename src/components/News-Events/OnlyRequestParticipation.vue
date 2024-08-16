@@ -3,28 +3,24 @@ import AddParticipant from "@/components/addItem/addParticipant.vue";
 import {ref, computed, onMounted} from "vue";
 import { useEventStore } from '@/store/eventStore';
 import { useCoachStore } from '@/store/coach/index';
-import AddWinners from "@/components/addItem/addWinners.vue";
 import { useParticipantStore } from '@/store/participant/index';
-import { useCitiesStore } from '@/store/cities/index';
 
 const eventStore = useEventStore();
 const coachStore = useCoachStore();
 const participantStore = useParticipantStore();
-const citiesStore = useCitiesStore();
 const selectedEvent = computed(() => eventStore.selectedEvent);
 
 const sportsmen = computed(() => participantStore.participants);
 
-const getCityName = (cityId: string) => {
-  const city = citiesStore.getCities.find(city => city.id === cityId);
-  return city ? city.name : 'Unknown City';
-};
-const coachName = computed(() => {
-  return coachStore.coach ? `${coachStore.coach.firstName} ${coachStore.coach.middleName} ${coachStore.coach.lastName}` : 'Coach not found';
+const cityName = computed(() => {
+  return selectedEvent.value && selectedEvent.value.city ? selectedEvent.value.city.name : 'Unknown City';
+});
+
+const disciplineTitle = computed(() => {
+  return selectedEvent.value && selectedEvent.value.discipline ? selectedEvent.value.discipline.title : 'Unknown Discipline';
 });
 
 const showModal = ref(false);
-const showWinner = ref(false);
 
 const showAddParticipant = () => {
   showModal.value = true;
@@ -34,25 +30,20 @@ const hideAddParticipant = () => {
   showModal.value = false;
 };
 
-const showAddWinner = () => {
-  showWinner.value = true;
-}
+const coachName = computed(() => {
+  return coachStore.coach ? `${coachStore.coach.firstName} ${coachStore.coach.middleName} ${coachStore.coach.lastName}` : 'Coach not found';
+});
 
-const hideAddWinner = () => {
-  showWinner.value = false;
-}
-
-onMounted(async () => {
+onMounted(()=>{
   console.log("Selected Event ID:", selectedEvent.value?.id);
-  await citiesStore.fetchCities();
+  if (selectedEvent.value && selectedEvent.value.discipline) {
+    coachStore.fetchCoach(selectedEvent.value.discipline.id, selectedEvent.value.participants[0]?.id);
+  }
   if (selectedEvent.value) {
     participantStore.setParticipants(selectedEvent.value.participants);
     participantStore.setSelectedEventId(selectedEvent.value.id);
-    if (selectedEvent.value.discipline) {
-      coachStore.fetchCoach(selectedEvent.value.discipline.id, selectedEvent.value.participants[0]?.id);
-    }
   }
-});
+})
 const schoolId = localStorage.getItem('schoolId');
 const userRole = localStorage.getItem('userRole');
 console.log('School ID:', schoolId, 'User Role:', userRole);
@@ -63,6 +54,7 @@ console.log('School ID:', schoolId, 'User Role:', userRole);
     <div class="content ml-4">
       <div class="content-title font-semibold text-2xl mt-9">
         Спортсмены
+        {{disciplineTitle}}
       </div>
       <div class="sportsmen-params flex flex-wrap gap-x-2">
         <div class="sportsmen-params-item">
@@ -120,11 +112,6 @@ console.log('School ID:', schoolId, 'User Role:', userRole);
           <img src="/icons/arrowDown.png" class="arrow-icon" alt="image school icon" />
         </div>
         <div class="sportsmen-params-item">
-          <button @click="showAddWinner" class="btn-add-participant">
-              Назначить победителей
-          </button>
-        </div>
-        <div class="sportsmen-params-item">
           <button @click="showAddParticipant" class="btn-add-participant">
             Добавить
           </button>
@@ -154,129 +141,105 @@ console.log('School ID:', schoolId, 'User Role:', userRole);
             <td>{{ person.birth_date }}</td>
             <td>{{ person.phoneNumber }}</td>
             <td>{{ person.school.name }}</td>
-            <td>{{ getCityName(person.school.cityId) }}</td>
+            <td>{{ cityName }}</td>
             <td>{{ coachName}}</td>
           </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <add-winners
-      v-if="showWinner"
-      @close="hideAddWinner"
-      class="add-winners"
-      :event-id="participantStore.selectedEventId"
-    />
     <add-participant v-if="showModal" @close="hideAddParticipant" :event-id="selectedEvent?.id" class="add-participant" />
   </div>
 </template>
 
 <style scoped>
-  .sportsmen-params{
-    color: #031954;
-  }
-  .content-title{
-    margin-bottom: 1rem;
-  }
-  .school-list{
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 10px 45px 10px 50px;
-    border: 1px solid #031954;
-    appearance: none;
-    border-radius: 5px;
-  }
-  .sportsmen-params-item{
-    position: relative;
-    width: max-content;
-  }
-  .school-icon{
-    width: 25px;
-    height: 24px;
-    position: absolute;
-    left: 11px;
-    top: 10px;
-  }
-  .arrow-icon{
-    width: 15px;
-    height: 9px;
-    position: absolute;
-    right: 9px;
-    top: 18px;
-  }
-  .btn-add-participant{
-    color: #005703;
-    font-weight: 500;
-    padding: 10px 32px;
-    border: 1px solid #005703;
-    border-radius: 15px;
-    transition: all 200ms ease;
-  }
-  .btn-add-participant:hover{
-    color: white;
-    background-color: #005703;
-  }
-  .table-container {
-    margin-top: 30px;
-    overflow-x: auto;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  th{
-    text-align: center;
-    padding: 12px;
-    border: 1px solid #ddd;
-  }
-  td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-  th {
-    background-color: #f4f4f4;
-    font-weight: 400;
-    color: #181818;
-  }
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-    color: #031954;
-  }
-  tr{
-    color: #031954;
-    font-weight: 500;
-    font-size: 16px;
-  }
-  tr:hover {
-    background-color: #f1f1f1;
-  }
-  .add-participant, .add-winners{
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    position: absolute;
-    background-color: rgba(255,255,255, 0.5);
-    top: 0;
-    left: 0;
-  }
+.sportsmen-params{
+  color: #031954;
+}
+.content-title{
+  margin-bottom: 1rem;
+}
+.school-list{
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 10px 45px 10px 50px;
+  border: 1px solid #031954;
+  appearance: none;
+  border-radius: 5px;
+}
+.sportsmen-params-item{
+  position: relative;
+  width: max-content;
+}
+.school-icon{
+  width: 25px;
+  height: 24px;
+  position: absolute;
+  left: 11px;
+  top: 10px;
+}
+.arrow-icon{
+  width: 15px;
+  height: 9px;
+  position: absolute;
+  right: 9px;
+  top: 18px;
+}
+.btn-add-participant{
+  color: #005703;
+  font-weight: 500;
+  padding: 10px 32px;
+  border: 1px solid #005703;
+  border-radius: 15px;
+  transition: all 200ms ease;
+}
+.btn-add-participant:hover{
+  color: white;
+  background-color: #005703;
+}
+.table-container {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th{
+  text-align: center;
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+th {
+  background-color: #f4f4f4;
+  font-weight: 400;
+  color: #181818;
+}
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+  color: #031954;
+}
+tr{
+  color: #031954;
+  font-weight: 500;
+  font-size: 16px;
+}
+tr:hover {
+  background-color: #f1f1f1;
+}
+.add-participant, .add-winners{
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
+  background-color: rgba(255,255,255, 0.5);
+  top: 0;
+  left: 0;
+}
 </style>
-<!--<div class="sportsmen-params-item">-->
-<!--<img src="/icons/profile-img.png" class="school-icon" alt="image school icon" />-->
-<!--<select class="school-list">-->
-<!--  <option value="">-->
-<!--    Спортсмен-->
-<!--  </option>-->
-<!--  <option value="1">-->
-<!--    Кабатов Жандос-->
-<!--  </option>-->
-<!--  <option value="2">-->
-<!--    Геннадий Головкин-->
-<!--  </option>-->
-<!--  <option value="3">-->
-<!--    Елдос Сметов-->
-<!--  </option>-->
-<!--</select>-->
-<!--<img src="/icons/arrowDown.png" class="arrow-icon" alt="image school icon" />-->
-<!--</div>-->
